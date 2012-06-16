@@ -12,6 +12,6 @@ public:
 	
 
 private:
-	unsigned short id;
+	long int id; //Lo hago long int para que coincida con el tipo de mensaje.
 	
 };
