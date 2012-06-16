@@ -4,11 +4,11 @@
 #include "../common/Uprintf.h"
 
 Socio::Socio(){
-	//id = pedir id
+	
 }
 
 Socio::~Socio(){
-	//devolver id
+	
 }
 
 bool Socio::IngresarAlPredio( int puerta ){
@@ -31,4 +31,12 @@ void Socio::TomarBusDeGimnasioASalaSalida(){
 
 void Socio::SalirDelPredio(){
 	throw std::runtime_error( "Not implemented" );
+}
+
+bool Socio::pedirId() {
+	
+}
+
+bool Socio::devolverId() {
+	
 }

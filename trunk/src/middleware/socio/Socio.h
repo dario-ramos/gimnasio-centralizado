@@ -1,7 +1,6 @@
 #pragma once
 
 class Socio{
-	int id;
 public:
 	Socio();
 	~Socio();
@@ -9,5 +8,10 @@ public:
 	void TomarBusDeSalaEntradaAGimnasio();
 	void Ejercitar();
 	void TomarBusDeGimnasioASalaSalida();
-	void SalirDelPredio();
+	void SalirDelPredio(int puerta);
+
+private: 
+	bool PedirId();
+	bool DevolverId();
+	int id; 
 };
