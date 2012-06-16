@@ -1,5 +1,4 @@
 #include "Comunicacion.h"
-#include <sys/stat.h>
 
 extern int tcpopact(char *, int);
 
@@ -28,12 +27,11 @@ int Comunicacion::inicializarComunicacion(){
 	/*Creo la cola de peticiones*/
 	struct stat fileInfo;
 	if( !( stat(DIRECTORIO,&fileInfo) == 0 && S_ISDIR(fileInfo.st_mode) ) ){
-		printf( "comunicacion: El directorio del ftok, %s, no existe\n", DIRECTORIO );
+		UPRINTLN( "comunicacion: El directorio del ftok, %s, no existe\n", DIRECTORIO );
 		return 1;
 	}
 	clave = ftok(DIRECTORIO, COLA_SALIDA);
-	sprintf(mostrar, "VA A CREAR LA COLA DE ENVIO con DIRECTORIO = %s y numero =%d\n", DIRECTORIO, COLA_SALIDA);
-	write(fileno(stdout), mostrar, strlen(mostrar));
+	UPRINTLN(mostrar, "VA A CREAR LA COLA DE ENVIO con DIRECTORIO = %s y numero =%d\n", DIRECTORIO, COLA_SALIDA);
 	if((envio_qid = msgget(clave, IPC_CREAT | IPC_EXCL | 0660)) == -1){
 		perror("inicializarComunicacion: error al crear la cola de peticiones");
 		return 1;	

@@ -2,12 +2,14 @@
 
 int main(){
 	Socio socio;
-	if( !socio.IngresarAlPredio() ){
+	int puerta = Random::EnteroEnRango( 0, Constantes::CANT_PUERTAS - 1 );
+	if( !socio.IngresarAlPredio(puerta) ){
 		return 1;
 	}
 	socio.TomarBusDeSalaEntradaAGimnasio();
 	socio.Ejercitar();
 	socio.TomarBusDeGimnasioASalaSalida();
-	socio.SalirDelPredio();
+	puerta = Random::EnteroEnRango( 0, Constantes::CANT_PUERTAS - 1 );
+	socio.SalirDelPredio(puerta);
 	return 0;
 }

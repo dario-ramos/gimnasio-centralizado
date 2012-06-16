@@ -6,6 +6,9 @@
 #include <stdio.h>
 #include <errno.h>
 #include <unistd.h>
+#include <sys/stat.h>
+#include "../../common/Uprintf.h"
+#include "baseComunicacion.h"
 
 class Comunicacion{
 public:
@@ -25,8 +28,5 @@ private:
 	int inicializarComunicacion();
 	void finalizarComunicacion();
 };
-
-
-
 
 #endif

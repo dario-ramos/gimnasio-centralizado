@@ -1,6 +1,6 @@
 #pragma once
 
-#include 
+#include "stdlib.h"
 
 namespace Random{
 	int EnteroEnRango( int min, int max ){
