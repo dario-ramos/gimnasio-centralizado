@@ -4,7 +4,7 @@
 #include "../../common/Constantes.h"
 #include "../../common/Uprintf.h"
 #include "../../common/Random.h"
-#include "../servidor_ids/servidor_ids_clientes.h"
+#include "../servidor_ids/servidor_ids.h"
 #include "../common/Comunicacion.h"
 
 using namespace std;

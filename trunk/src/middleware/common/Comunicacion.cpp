@@ -30,7 +30,8 @@ int Comunicacion::inicializarComunicacion(){
 		UPRINTLN( "comunicacion: El directorio del ftok, %s, no existe\n", DIRECTORIO );
 		return 1;
 	}
-	clave = ftok(DIRECTORIO, COLA_SALIDA);
+
+	clave = obtenerClaveEnvio();
 	UPRINTLN(mostrar, "VA A CREAR LA COLA DE ENVIO con DIRECTORIO = %s y numero =%d\n", DIRECTORIO, COLA_SALIDA);
 	if((envio_qid = msgget(clave, IPC_CREAT | IPC_EXCL | 0660)) == -1){
 		perror("inicializarComunicacion: error al crear la cola de peticiones");
@@ -38,9 +39,7 @@ int Comunicacion::inicializarComunicacion(){
 	}
 
 	/*Creo la cola de respuesta*/
-	clave = ftok(DIRECTORIO, COLA_ENTRADA);
-	sprintf(mostrar, "VA A CREAR LA COLA DE ENVIO con DIRECTORIO = %s y numero =%d", DIRECTORIO, COLA_ENTRADA);
-	write(fileno(stdout), mostrar, strlen(mostrar));
+	clave = obtenerClaveRecepcion();
 	if((recep_qid = msgget(clave, IPC_CREAT | IPC_EXCL | 0660)) == -1){
 		perror("inicializarComunicacion: error al crear la cola de respuesta");
 		return 1;		
@@ -81,6 +80,8 @@ void Comunicacion::finalizarComunicacion(){
 		perror("Comunicacion: error al borrar la cola de recepcion");
 	}
 }
+
+
 
 
 

@@ -11,7 +11,7 @@ Socio::Socio(string &ip_serv_ids) : ip_servidor_ids(ip_serv_ids){
 Socio::~Socio(){
 	if(!DevolverId()){
 		char printBuffer[200];
-		UPRINTLN( "Socio", printBuffer, "No pudo obtener Id.");
+		UPRINTLN( "Socio", printBuffer, "%d no pudo devolver Id.", id);
 	}
 }
 
@@ -46,18 +46,18 @@ bool Socio::PedirId() {
 			clnt_pcreateerror (ip_servidor_);
 			return false;
 	}
-	result_1 = obtener_nuevo_id_cliente_1((void*)&obtener_nuevo_id_cliente_1_arg, clnt);
+	result_1 = obtener_nuevo_id_socio_1((void*)&obtener_nuevo_id_cliente_1_arg, clnt);
 	if (result_1 == (retorno *) NULL) {
 			clnt_perror (clnt, "Error al obtener el Id");
 			return false;
 	}
-	id = result_1->retorno_u.id_cliente;
+	id = result_1->retorno_u.id;
 	return true;
 }
 
 bool Socio::DevolverId() {
     retorno  *result_1;
-    result_1 = devolver_id_cliente_1(&id, clnt);
+    result_1 = devolver_id_socio_1(&id, clnt);
     if (result_1 == (retorno *) NULL) {
             clnt_perror (clnt, "Error al obtener el Id");
             return false;
