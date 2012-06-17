@@ -3,7 +3,7 @@
  * It was generated using rpcgen.
  */
 
-#include "servidor_ids_clientes.h"
+#include "servidor_ids.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <rpc/pmap_clnt.h>
@@ -20,7 +20,9 @@ static void
 servidor_ids_prog_1(struct svc_req *rqstp, register SVCXPRT *transp)
 {
 	union {
-		int devolver_id_cliente_1_arg;
+		int devolver_id_socio_1_arg;
+		int devolver_id_puerta_1_arg;
+		int devolver_id_bus_1_arg;
 	} argument;
 	char *result;
 	xdrproc_t _xdr_argument, _xdr_result;
@@ -31,16 +33,40 @@ servidor_ids_prog_1(struct svc_req *rqstp, register SVCXPRT *transp)
 		(void) svc_sendreply (transp, (xdrproc_t) xdr_void, (char *)NULL);
 		return;
 
-	case OBTENER_NUEVO_ID_CLIENTE:
+	case OBTENER_NUEVO_ID_SOCIO:
 		_xdr_argument = (xdrproc_t) xdr_void;
 		_xdr_result = (xdrproc_t) xdr_retorno;
-		local = (char *(*)(char *, struct svc_req *)) obtener_nuevo_id_cliente_1_svc;
+		local = (char *(*)(char *, struct svc_req *)) obtener_nuevo_id_socio_1_svc;
 		break;
 
-	case DEVOLVER_ID_CLIENTE:
+	case DEVOLVER_ID_SOCIO:
 		_xdr_argument = (xdrproc_t) xdr_int;
 		_xdr_result = (xdrproc_t) xdr_retorno;
-		local = (char *(*)(char *, struct svc_req *)) devolver_id_cliente_1_svc;
+		local = (char *(*)(char *, struct svc_req *)) devolver_id_socio_1_svc;
+		break;
+
+	case OBTENER_NUEVO_ID_PUERTA:
+		_xdr_argument = (xdrproc_t) xdr_void;
+		_xdr_result = (xdrproc_t) xdr_retorno;
+		local = (char *(*)(char *, struct svc_req *)) obtener_nuevo_id_puerta_1_svc;
+		break;
+
+	case DEVOLVER_ID_PUERTA:
+		_xdr_argument = (xdrproc_t) xdr_int;
+		_xdr_result = (xdrproc_t) xdr_retorno;
+		local = (char *(*)(char *, struct svc_req *)) devolver_id_puerta_1_svc;
+		break;
+
+	case OBTENER_NUEVO_ID_BUS:
+		_xdr_argument = (xdrproc_t) xdr_void;
+		_xdr_result = (xdrproc_t) xdr_retorno;
+		local = (char *(*)(char *, struct svc_req *)) obtener_nuevo_id_bus_1_svc;
+		break;
+
+	case DEVOLVER_ID_BUS:
+		_xdr_argument = (xdrproc_t) xdr_int;
+		_xdr_result = (xdrproc_t) xdr_retorno;
+		local = (char *(*)(char *, struct svc_req *)) devolver_id_bus_1_svc;
 		break;
 
 	default:

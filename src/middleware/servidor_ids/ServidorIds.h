@@ -3,7 +3,9 @@
 
 #include <stdio.h>
 
-#define ARCHIVO "/home/tomas/Documents/Distribuidos/trunk/servidor_ids_clientes/ids_servidor_rpc.ids"
+#define ARCHIVO_SOCIOS "/home/tomas/Documents/Distribuidos/trunk/servidor_ids_clientes/ids_socios.ids"
+#define ARCHIVO_PUERTAS "/home/tomas/Documents/Distribuidos/trunk/servidor_ids_clientes/ids_puertas.ids"
+#define ARCHIVO_BUSES "/home/tomas/Documents/Distribuidos/trunk/servidor_ids_clientes/ids_buses.ids"
 #define MAX_CANT_CLIENTES 10
 #define SERVIDOR_IDS_MAX_LONG_MSJ_ERROR 200
 
@@ -13,9 +15,9 @@ typedef struct ServidorIds{
 	char msjError[SERVIDOR_IDS_MAX_LONG_MSJ_ERROR];
 }ServidorIds;
 
-void ServidorIds_Conectar( ServidorIds* pThis );
+void ServidorIds_Conectar( ServidorIds* pThis , char *archivo);
 
-void ServidorIds_Desconectar( ServidorIds* pThis );
+void ServidorIds_Desconectar( ServidorIds* pThis, char *archivo );
 
 int ServidorIds_PedirId( ServidorIds* pThis );
 
