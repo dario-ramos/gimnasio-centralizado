@@ -5,7 +5,8 @@
 #include "../../common/Uprintf.h"
 #include "../../common/Random.h"
 #include "../servidor_ids/servidor_ids.h"
-#include "../common/Comunicacion.h"
+#include "ComunicacionSocio.h"
+#include "../common/baseComunicacion.h"
 
 using namespace std;
 
@@ -15,6 +16,7 @@ public:
 	~Socio();
 	bool IngresarAlPredio( int puerta );
 	void TomarBusDeSalaEntradaAGimnasio();
+	void BajarDelBus();
 	void Ejercitar();
 	void TomarBusDeGimnasioASalaSalida();
 	void SalirDelPredio(int puerta);
@@ -24,6 +26,7 @@ private:
 	bool DevolverId();
 	int id;
     string ip_servidor_ids;
+    ComunicacionSocio comunicacion;
 
     CLIENT *clnt;
 };

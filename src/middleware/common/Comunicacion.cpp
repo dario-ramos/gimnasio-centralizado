@@ -1,8 +1,8 @@
 #include "Comunicacion.h"
 
-extern int tcpopact(char *, int);
+//extern int tcpopact(char *, int); Dejo comentado la parte de sockets, esto se usara mas tarde
 
-Comunicacion::Comunicacion(char * nombr_serv, int puert) : nombre_serv(nombr_serv), puerto(puert){
+Comunicacion::Comunicacion(/*char * nombr_serv, int puert*/) /*: nombre_serv(nombr_serv), puerto(puert)*/{
 	_error = inicializarComunicacion() != 0;
 } 
 
@@ -47,7 +47,7 @@ int Comunicacion::inicializarComunicacion(){
 	/*Hago open activo*/
 	//sprintf(mostrar, "inicializarComunicacion: Se va a hacer el open activo al servidor %s en el puerto %d.\n", nombre_servidor, puerto);
 	//write(fileno(stdout), mostrar, strlen(mostrar));
-	sfd = tcpopact(nombre_serv, puerto);
+	/*sfd = tcpopact(nombre_serv, puerto);
 
 	sprintf(par1, "%d", sfd);
 	if((childpid = fork()) < 0){
@@ -60,13 +60,13 @@ int Comunicacion::inicializarComunicacion(){
 	}
 	sprintf(par2, "%d" ,childpid);
 	if((childpid = fork()) < 0){
-		perror("lanza_cliente: error al crear cliente");
+		perror("lanza_cliente: error al crear puerto de salida.");
 		return 1;
 	}else if(childpid == 0){
 		execl("./puerto_salida", "puerto_salida", par1, par2, (char *) 0);
 		perror("inicializarComunicacion: error al ejecutar un cliente");
 		return 1;
-	}
+	}*/
 	return 0;	
 }
 
