@@ -3,18 +3,18 @@
 
 # Parameters
 
-CLIENT = servidor_ids_clientes_client
-SERVER = servidor_ids_clientes_server
+CLIENT = servidor_ids_client
+SERVER = servidor_ids_server
 
 SOURCES_CLNT.c = 
 SOURCES_CLNT.h = 
 SOURCES_SVC.c = ServidorIds.c
 SOURCES_SVC.h = ServidorIds.h
-SOURCES.x = servidor_ids_clientes.x
+SOURCES.x = servidor_ids.x
 
-TARGETS_SVC.c = servidor_ids_clientes_svc.c servidor_ids_clientes_server.c servidor_ids_clientes_xdr.c 
-TARGETS_CLNT.c = servidor_ids_clientes_clnt.c servidor_ids_clientes_client.c servidor_ids_clientes_xdr.c 
-TARGETS = servidor_ids_clientes.h servidor_ids_clientes_xdr.c servidor_ids_clientes_clnt.c servidor_ids_clientes_svc.c servidor_ids_clientes_client.c servidor_ids_clientes_server.c
+TARGETS_SVC.c = servidor_ids_svc.c servidor_ids_server.c servidor_ids_xdr.c 
+TARGETS_CLNT.c = servidor_ids_clnt.c servidor_ids_client.c servidor_ids_xdr.c 
+TARGETS = servidor_ids.h servidor_ids_xdr.c servidor_ids_clnt.c servidor_ids_svc.c servidor_ids_client.c servidor_ids_server.c
 
 OBJECTS_CLNT = $(SOURCES_CLNT.c:%.c=%.o) $(TARGETS_CLNT.c:%.c=%.o)
 OBJECTS_SVC = $(SOURCES_SVC.c:%.c=%.o) $(TARGETS_SVC.c:%.c=%.o)
@@ -42,5 +42,5 @@ $(SERVER) : $(OBJECTS_SVC)
 	$(LINK.c) -o $(SERVER) $(OBJECTS_SVC) $(LDLIBS)
 
  clean:
-	 $(RM) core $(OBJECTS_SVC) $(CLIENT) $(SERVER)
+	 $(RM) core $(TARGETS) $(OBJECTS_CLNT) $(OBJECTS_SVC) $(CLIENT) $(SERVER)
 

@@ -1,8 +1,8 @@
 #include "ServidorIds.h"
 
-int ServidorIds_GenerarArchivo( ServidorIds* pThis ){
+int ServidorIds_GenerarArchivo( ServidorIds* pThis, char * archivo ){
 	int i = 1;
-	pThis->archivoIds = fopen( ARCHIVO, "w+b" );
+	pThis->archivoIds = fopen( archivo, "w+b" );
 	fseek( pThis->archivoIds, 0, SEEK_SET );
 	fwrite( (char*)&i, sizeof(int), 1, pThis->archivoIds );
 	for( ; i<= MAX_CANT_CLIENTES; i++ ){
@@ -17,8 +17,8 @@ int ServidorIds_GenerarArchivo( ServidorIds* pThis ){
 }
 
 
-void ServidorIds_Conectar( ServidorIds* pThis ){
-	pThis->archivoIds = fopen( ARCHIVO, "r+b" );
+void ServidorIds_Conectar( ServidorIds* pThis , char *archivo){
+	pThis->archivoIds = fopen( archivo, "r+b" );
 	pThis->huboError = 0;
 	if( pThis->archivoIds == NULL ){
 		if( !ServidorIds_GenerarArchivo( pThis ) ){
@@ -27,11 +27,11 @@ void ServidorIds_Conectar( ServidorIds* pThis ){
 			sprintf( pThis->msjError, "No se pudo generar el archivo de ids.\n" );
 			printf("No hay mas ids libres.\n");
 		}
-		pThis->archivoIds = fopen( ARCHIVO, "r+b" );
+		pThis->archivoIds = fopen( archivo, "r+b" );
 	}
 }
 
-void ServidorIds_Desconectar( ServidorIds* pThis ){
+void ServidorIds_Desconectar( ServidorIds* pThis, char * archivo ){
 	fclose( pThis->archivoIds );
 	if( ferror(pThis->archivoIds) ){
 		perror("ServidorIds: error al cerrar el archivo.");

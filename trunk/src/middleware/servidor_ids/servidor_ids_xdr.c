@@ -3,7 +3,7 @@
  * It was generated using rpcgen.
  */
 
-#include "servidor_ids_clientes.h"
+#include "servidor_ids.h"
 
 bool_t
 xdr_retorno (XDR *xdrs, retorno *objp)
@@ -14,7 +14,7 @@ xdr_retorno (XDR *xdrs, retorno *objp)
 		 return FALSE;
 	switch (objp->cod_ret) {
 	case 1:
-		 if (!xdr_int (xdrs, &objp->retorno_u.id_cliente))
+		 if (!xdr_int (xdrs, &objp->retorno_u.id))
 			 return FALSE;
 		break;
 	case 2:
