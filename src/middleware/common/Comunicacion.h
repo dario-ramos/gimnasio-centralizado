@@ -13,7 +13,7 @@
 class Comunicacion{
 public:
 	Comunicacion(char * nombre_serv, int puerto);
-	~Comunicacion();
+	virtual ~Comunicacion();
 	int enviar_mensaje(const void * msg, int msg_size);
 	int recibir_mensaje(void *, int msg_size, long msgtype);
 	operator bool() const { return !_error; }
@@ -27,6 +27,9 @@ private:
 
 	int inicializarComunicacion();
 	void finalizarComunicacion();
+
+	virtual key_t obtenerClaveEnvio() = 0;//ftok(DIRECTORIO, COLA_ENTRADA);
+	virtual key_t obtenerClaveRecepcion() = 0;//ftok(DIRECTORIO, COLA_ENTRADA);
 };
 
 #endif
