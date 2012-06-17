@@ -15,6 +15,7 @@
 #define SALA_PUERTA_SALIDA 5
 #define SALA_GIMNACIO_ENTRADA 6
 #define SALA_GIMNASIO_SALIDA 7
+#define SEM_BUS 8
 
 
 #include <cstdio>
@@ -32,11 +33,16 @@
 typedef struct {
 	long int tipo;
 	int idSocio;
-
-} socio;
+	int nroPuerta;
+} MsjSocio;
 
 typedef struct {
 	int cantidad;
-} cantidadSocios;
+} ShmCantidadSocios;
+
+typedef struct {
+	int entrada;
+	int saldia;
+} ShmBus;
 
 
