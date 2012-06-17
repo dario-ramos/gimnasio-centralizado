@@ -17,8 +17,19 @@ Socio::~Socio(){
 
 bool Socio::IngresarAlPredio( int puerta ){
 	char printBuffer[200];
-	UPRINTLN( "Socio", printBuffer, "Socio %d decidio entrar por puerta %d", id, puerta ); //TODO <NIM> Imprimir id de socio
-
+	UPRINTLN( "Socio", printBuffer, "Socio %d decidio entrar por puerta %d", id, puerta );
+	MsjSocio msj;
+	MsjRespPuerta msjRespuesta;
+	msj.idSocio = id;
+	msj.nroPuerta = puerta;
+	msj.tipo = puerta;
+	comunicacion.enviar_mensaje(&msj, sizeof(msj));
+	comunicacion.recibir_mensaje(&msjRespuesta, sizeof(msjRespuesta), id);
+	if (msjRespuesta.codigoRespuesta){
+		UPRINTLN( "Socio", printBuffer, "%d No pudo entrar, predio lleno.", id);
+		return false;
+	}
+	UPRINTLN( "Socio", printBuffer, "%d Entro al predio.", id);
 	return true;
 }
 

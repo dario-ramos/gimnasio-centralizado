@@ -12,7 +12,7 @@
 
 class Comunicacion{
 public:
-	Comunicacion(char * nombre_serv, int puerto);
+	Comunicacion(/*char * nombre_serv, int puerto*/);
 	virtual ~Comunicacion();
 	int enviar_mensaje(const void * msg, int msg_size);
 	int recibir_mensaje(void *, int msg_size, long msgtype);
@@ -21,10 +21,12 @@ public:
 private:
 	int envio_qid;
 	int recep_qid;
-	char * nombre_serv;
-	int puerto;
+	/*char * nombre_serv;
+	int puerto;*/
 	bool _error;
 
+	Comunicacion(const Comunicacion &) {}
+	Comunicacion operator=(const Comunicacion &) {}
 	int inicializarComunicacion();
 	void finalizarComunicacion();
 
