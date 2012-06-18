@@ -24,7 +24,7 @@ int Comunicacion::inicializarComunicacion(){
 	int childpid;
 	int sfd;
 
-	/*Creo la cola de peticiones*/
+	/*Creo la cola de recepcion*/
 	struct stat fileInfo;
 	if( !( stat(DIRECTORIO,&fileInfo) == 0 && S_ISDIR(fileInfo.st_mode) ) ){
 		UPRINTLN( "comunicacion: El directorio del ftok, %s, no existe\n", DIRECTORIO );

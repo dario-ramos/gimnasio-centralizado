@@ -10,12 +10,13 @@
 
 #define SHM_PUERTAS 1
 #define SEM_SHM_PUERTAS 2
-#define COLA_ENTRADA_PUERTAS 3
-#define COLA_ENTRADA_SOCIOS 4
-#define SALA_ENTRADA 5
-#define SALA_SALIDA 6
-#define COLA_ENTRADA_GIMNACIO 7
-#define SEM_BUS 9
+#define COLA_ENTRADA_PUERTAS 3 //Por donde reciben las puertas
+#define COLA_ENTRADA_SOCIOS 4  //Por donde reciben los socios
+#define SALA_ENTRADA 5         //Sala entre puerta de entrada y bus
+#define SALA_SALIDA 6          //Sala entre gimnacio y bus
+#define COLA_ENTRADA_GIMNACIO 7//Para comunica bus con gimnacio
+#define SHM_SALAS 100 		   //Base para memorias compartidas entre puerta-buse-gimancio, habra una para cada puerta
+#define SEM_BUS 200			   //Base para semaforos de buses, uno por cada bus.
 
 
 #include <cstdio>
