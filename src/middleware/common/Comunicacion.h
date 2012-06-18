@@ -27,8 +27,8 @@ private:
 
 	Comunicacion(const Comunicacion &) {}
 	Comunicacion operator=(const Comunicacion &) {}
-	int inicializarComunicacion();
-	void finalizarComunicacion();
+	virtual int inicializarComunicacion();
+	virtual void finalizarComunicacion();
 
 	virtual key_t obtenerClaveEnvio() = 0;//ftok(DIRECTORIO, COLA_ENTRADA);
 	virtual key_t obtenerClaveRecepcion() = 0;//ftok(DIRECTORIO, COLA_ENTRADA);
