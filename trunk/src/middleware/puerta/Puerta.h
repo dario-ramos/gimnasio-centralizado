@@ -15,16 +15,21 @@ public:
 	~Puerta();
 
 	MsjSocio &EsperarSocio();
-	void IngresarSocio();
-	void EgresarSocio();
+	bool IngresarSocio();
+	bool EgresarSocio();
+	void BorrarSocio();
+	void NotificarExito();//notifica que la operacion se pudo llevar a cabo (entrada o salida)
+	void NotificarFallo();//notifica que la operacion no se pudo llevar a cabo (entrada o salida)
 	
 
 private:
-	long int id; //Lo hago long int para que coincida con el tipo de mensaje.
+	int id;
 	string ip_servidor_ids;
+	MsjSocio socioActual;
 
 	ShmCantidadSocios *shmPuertas;
-	int shmPuertasId, mutexPuertas;
+	ShmBus *shmBus;
+	int shmPuertasId, shmBusId, semBus, mutexShmBus, mutexPuertas;
 
 
 	CLIENT *clnt;
@@ -32,5 +37,7 @@ private:
 	bool PedirId();
 	bool DevolverId();
 	bool ObtenerMemoriaCompartidaPuertas();
+	bool ObtenerMemoriaCompartidaBus();
+	bool ObtenerSemaforoBus();
 	
 };
