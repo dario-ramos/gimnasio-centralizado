@@ -2,6 +2,9 @@
 #include "../common/Comunicacion.h"
 
 class ComunicacionPuerta : public Comunicacion {
+public:
+
+	int enviar_mensaje_bus(const void * msg, int msg_size);
 
 private:
 	int envio_Bus_qid;
@@ -32,4 +35,8 @@ key_t ComunicacionPuerta::obtenerClaveEnvio(){
 
 key_t ComunicacionPuerta::obtenerClaveRecepcion(){
 	return ftok(DIRECTORIO, COLA_ENTRADA_PUERTAS);
+}
+
+int ComunicacionPuerta::enviar_mensaje_bus(const void * msg, int msg_size) {
+	return msgsnd(envio_Bus_qid, msg, msg_size - sizeof(long), 0);
 }

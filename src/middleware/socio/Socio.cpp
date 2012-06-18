@@ -22,7 +22,9 @@ bool Socio::IngresarAlPredio( int puerta ){
 	MsjRespPuerta msjRespuesta;
 	msj.idSocio = id;
 	msj.nroPuerta = puerta;
+	msj.entrando = 1; //entrando = 1
 	msj.tipo = puerta;
+
 	comunicacion.enviar_mensaje(&msj, sizeof(msj));
 	comunicacion.recibir_mensaje(&msjRespuesta, sizeof(msjRespuesta), id);
 	if (msjRespuesta.codigoRespuesta){
