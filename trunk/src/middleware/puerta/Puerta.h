@@ -4,7 +4,8 @@
 #include "../../common/Uprintf.h"
 #include "../../common/Random.h"
 #include "../servidor_ids/servidor_ids.h"
-#include "../common/Comunicacion.h"
+#include "ComunicacionPuerta.h"
+#include "../common/baseComunicacion.h"
 
 using namespace std;
 
@@ -21,9 +22,15 @@ public:
 private:
 	long int id; //Lo hago long int para que coincida con el tipo de mensaje.
 	string ip_servidor_ids;
+
+	ShmCantidadSocios *shmPuertas;
+	int shmPuertasId, mutexPuertas;
+
+
 	CLIENT *clnt;
-	Comunicacion comunicacion;
+	ComunicacionPuerta comunicacion;
 	bool PedirId();
 	bool DevolverId();
+	bool ObtenerMemoriaCompartidaPuertas();
 	
 };

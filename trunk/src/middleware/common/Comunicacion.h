@@ -9,6 +9,7 @@
 #include <sys/stat.h>
 #include "../../common/Uprintf.h"
 #include "baseComunicacion.h"
+#include "../common/semaforo.h"
 
 class Comunicacion{
 public:
