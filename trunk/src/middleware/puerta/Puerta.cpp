@@ -7,15 +7,15 @@ Puerta::Puerta(string & ip_srv_ids) : ip_servidor_ids(ip_srv_ids) {
 	}
 	if(!ObtenerMemoriaCompartidaPuertas()) {
 		char printBuffer[200];
-		UPRINTLN( "Puerta", printBuffer, "No se pudo obtener la memoria compartida entre puertas.");
+		UPRINTLN( "Puerta", printBuffer, "%d No se pudo obtener la memoria compartida entre puertas.", id);
 	}
 	if(!ObtenerMemoriaCompartidaBus()) {
 		char printBuffer[200];
-		UPRINTLN( "Puerta", printBuffer, "No se pudo obtener la memoria compartida con el bus.");
+		UPRINTLN( "Puerta", printBuffer, "%d No se pudo obtener la memoria compartida con el bus.", id);
 	}
 	if(!ObtenerSemaforoBus()) {
 		char printBuffer[200];
-		UPRINTLN( "Puerta", printBuffer, "No se pudo obtener el semaforo del bus.");
+		UPRINTLN( "Puerta", printBuffer, "%d No se pudo obtener el semaforo del bus.", id);
 	}
 
 }
@@ -151,7 +151,7 @@ bool Puerta::ObtenerMemoriaCompartidaBus() {
 		printf( "El directorio del ftok, %s, no existe\n", DIRECTORIO );
 		return false;
 	}
-	clave = ftok(DIRECTORIO, SHM_PUERTAS);
+	clave = ftok(DIRECTORIO, SHM_SALAS);
 	if((shmBusId = shmget(clave, sizeof(ShmBus),  0660)) == -1){
 		perror("servidor: error obteniendo la memoria compartida");
 		return false;
@@ -171,7 +171,7 @@ bool Puerta::ObtenerMemoriaCompartidaBus() {
 
 bool Puerta::ObtenerSemaforoBus() {
 	/*Obtengo el semaforo para la memoria compartida entre puertas*/
-	if((semBus = getsem(SEM_SHM_BUS)) == -1){
+	if((semBus = getsem(SEM_BUS)) == -1){
 		perror("servidor: error al crear el semaforo");
 		return false;
 	}

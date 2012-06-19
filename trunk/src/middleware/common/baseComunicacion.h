@@ -2,6 +2,7 @@
 #define DIRECTORIO "/home/tomas/Documents/Distribuidos/gimnacio/trunk"
 
 #define CAPACIDAD_PREDIO 200
+#define CAPACIDAD_BUS 25
 
 #define PUERTO 5000
 
@@ -14,7 +15,7 @@
 #define COLA_ENTRADA_GIMNACIO 7//Para comunica bus con gimnacio
 #define SHM_SALAS 100 		   //Base para memorias compartidas entre puerta-bus-gimancio, habra una para cada puerta
 #define SEM_SHM_BUS 200		   //Base para los semaforos que controlan el ingreso a la memoria compartida entre puerta-bus-gimnacio
-#define SEM_BUS 200			   //Base para semaforos de buses, uno por cada bus.
+#define SEM_BUS 300			   //Base para semaforos de buses, uno por cada bus.
 
 
 #include <cstdio>
