@@ -10,7 +10,7 @@
 
 using namespace std;
 
-class Socio{
+class Socio{	//TODO <NIM> Implementar manejo de errores: Devolver codigo de error en todas las funciones, o bien tirar excepciones. Lo mismo para el resto de la API
 public:
 	Socio(string & ip_serv_ids);
 	~Socio();
