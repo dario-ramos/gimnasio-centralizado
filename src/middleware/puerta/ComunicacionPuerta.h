@@ -23,9 +23,18 @@ int ComunicacionPuerta::inicializarComunicacion(){
 	key_t clave;
 	/*Creo la cola de envio al bus*/
 	clave = ftok(DIRECTORIO, SALA_ENTRADA);
-	if((recep_Bus_qid = msgget(clave, IPC_CREAT | IPC_EXCL | 0660)) == -1){
+	if((recep_Bus_qid = msgget(clave, 0660)) == -1){
 		perror("inicializarComunicacion: error al crear la cola de respuesta");
 		return 1;
+	}
+	return 0;
+}
+
+void ComunicacionPuerta::finalizarComunicacion(){
+	Comunicacion::finalizarComunicacion();
+	/*Creo la cola de envio al bus*/
+	if(msgctl(envio_qid, IPC_RMID, (msqid_ds *) 0)){
+		perror("Comunicacion: error al borrar la cola de envio.");
 	}
 }
 
