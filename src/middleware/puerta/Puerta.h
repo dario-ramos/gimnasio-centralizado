@@ -11,7 +11,7 @@ using namespace std;
 
 class Puerta {
 public:
-	Puerta(string & ip_srv_ids);
+	Puerta(int idPuerta);
 	~Puerta();
 
 	MsjSocio &EsperarSocio();
@@ -24,20 +24,17 @@ public:
 
 private:
 	int id;
-	string ip_servidor_ids;
 	MsjSocio socioActual;
 
 	ShmCantidadSocios *shmPuertas;
 	ShmBus *shmBus;
 	int shmPuertasId, shmBusId, semBus, mutexShmBus, mutexPuertas;
-
-
-	CLIENT *clnt;
 	ComunicacionPuerta comunicacion;
-	bool PedirId();
-	bool DevolverId();
+
 	bool ObtenerMemoriaCompartidaPuertas();
 	bool ObtenerMemoriaCompartidaBus();
 	bool ObtenerSemaforoBus();
+	bool liberarMemoriaCompartidaPuertas();
+	bool liberarMemoriaCompartidaBus();
 	
 };
