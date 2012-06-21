@@ -17,12 +17,8 @@
 #define SEM_SHM_BUS 200		   //Base para los semaforos que controlan el ingreso a la memoria compartida entre puerta-bus-gimnacio
 #define SEM_BUS 300			   //Base para semaforos de buses, uno por cada bus.
 
-#define ID_PUERTA_1 1000
-#define ID_PUERTA_2 1001
-#define ID_PUERTA_3 1002
-#define ID_BUS_1 2000
-#define ID_BUS_1 2001
-#define ID_BUS_1 2002
+#define BASE_ID_PUERTA 1000
+#define BASE_ID_BUS 2000
 #define ID_GIMNACIO 3000
 
 

@@ -1,6 +1,10 @@
 #include "Puerta.h"
 
-Puerta::Puerta(int idPuerta) : id(idPuerta) {
+Puerta::Puerta(const string & ip_srv_ids) : ip_servidor_ids(ip_srv_ids) {
+	if(!PedirId()) {
+		char printBuffer[200];
+		UPRINTLN( "Puerta", printBuffer, "%No se pudo obtener id y nro de puerta.");
+	}
 	if(!ObtenerMemoriaCompartidaPuertas()) {
 		char printBuffer[200];
 		UPRINTLN( "Puerta", printBuffer, "%d No se pudo obtener la memoria compartida entre puertas.", id);
@@ -19,6 +23,10 @@ Puerta::Puerta(int idPuerta) : id(idPuerta) {
 Puerta::~Puerta() {
 	if (!liberarMemoriaCompartidaPuertas()) {
 		char printBuffer[200];
+		UPRINTLN( "Puerta", printBuffer, "%d Error al devolver el nro de puerta", nroPuerta);
+	}
+	if (!liberarMemoriaCompartidaPuertas()) {
+		char printBuffer[200];
 		UPRINTLN( "Puerta", printBuffer, "%d Error al desasociarse de la memoria compartida entre puertas", id);
 	}
 	if (!liberarMemoriaCompartidaBus()) {
@@ -26,6 +34,36 @@ Puerta::~Puerta() {
 		UPRINTLN( "Puerta", printBuffer, "%d Error al desasociarse de la memoria compartida del bus", id);
 	}
 }
+
+bool Puerta::PedirId() {
+	retorno  *result_1;
+	char *obtener_nuevo_id_cliente_1_arg;
+	clnt = clnt_create (ip_servidor_ids.c_str(), SERVIDOR_IDS_PROG, SERVIDOR_IDS_VERS, "udp");
+	if (clnt == NULL) {
+		clnt_pcreateerror (ip_servidor_);
+		return false;
+	}
+	result_1 = obtener_nuevo_id_puerta_1((void*)&obtener_nuevo_id_cliente_1_arg, clnt);
+	if (result_1 == (retorno *) NULL) {
+		clnt_perror (clnt, "Error al obtener el Id");
+		return false;
+	}
+	nroPuerta = result_1->retorno_u.id;
+	id = BASE_ID_PUERTA + nroPuerta;
+	return true;
+}
+
+bool Puerta::DevolverId() {
+    retorno  *result_1;
+    result_1 = devolver_id_puerta_1(&nroPuerta, clnt);
+    if (result_1 == (retorno *) NULL) {
+            clnt_perror (clnt, "Error al devolver el Id");
+            return false;
+    }
+    clnt_destroy (clnt);
+    return true;
+}
+
 
 MsjSocio & Puerta::EsperarSocio() {
 	comunicacion.recibir_mensaje(&socioActual, sizeof(socioActual), id);
