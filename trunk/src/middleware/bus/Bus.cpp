@@ -55,7 +55,7 @@ bool Bus::ObtenerMemoriaCompartida() {
 		printf( "El directorio del ftok, %s, no existe\n", DIRECTORIO );
 		return false;
 	}
-	clave = ftok(DIRECTORIO, SHM_SALAS);
+	clave = ftok(DIRECTORIO, SHM_SALAS + nroBus);
 	if((shmBusId = shmget(clave, sizeof(ShmBus),  0660)) == -1){
 		perror("servidor: error obteniendo la memoria compartida");
 		return false;
@@ -66,7 +66,7 @@ bool Bus::ObtenerMemoriaCompartida() {
 	}
 
 	/*Obtengo el semaforo para la memoria compartida entre puertas*/
-	if((mutexShmBus = getsem(SEM_SHM_BUS)) == -1){
+	if((mutexShmBus = getsem(SEM_SHM_BUS + nroBus)) == -1){
 		perror("servidor: error al crear el semaforo");
 		return false;
 	}
@@ -75,7 +75,7 @@ bool Bus::ObtenerMemoriaCompartida() {
 
 bool Bus::ObtenerSemaforo() {
 	/*Obtengo el semaforo del bus*/
-	if((semBus = getsem(SEM_BUS)) == -1){
+	if((semBus = getsem(SEM_BUS + nroBus)) == -1){
 		perror("servidor: error al crear el semaforo");
 		return false;
 	}
@@ -83,8 +83,36 @@ bool Bus::ObtenerSemaforo() {
 }
 
 void Bus::SubirPasajeros(){
-	//TODO <NIM>
+	if(posicion == PUERTA){
+		subirPasajerosPuerta();
+	} else if (posicion == GIMNACIO) {
+		subirPasajerosGimnacio();
+	} else {
+		char printBuffer[200];
+		UPRINTLN( "Bus", printBuffer, "%d No se puede subir pasajeros estando en transito.", id);
+	}
 }
+
+void Bus::subirPasajerosPuerta() {
+	if (cantidadPasajeros != 0){
+		char printBuffer[200];
+		UPRINTLN( "Bus", printBuffer, "%d No se puede inicial la subidad de pasajeros a menos que el bus este vacio.", id);
+		return;
+	}
+	p(mutexShmBus);
+	//verifico si tiene que esperar
+	if (shmBus->entrada == 0 && shmBus->salida == 0){
+		p(semBus);
+	}
+	int i;
+	for (i = 0; shmBus->entrada > 0 && i < CAPACIDAD_BUS; i++) {
+		comunicacion.recibir_mensaje(socios+i, sizeof(*socios+i), id);
+		shmBus->entrada --;
+	}
+	cantidadPasajeros = i;
+	v(mutexShmBus);
+}
+
 
 void Bus::ViajarProximoDestino(){
 	//TODO <NIM>

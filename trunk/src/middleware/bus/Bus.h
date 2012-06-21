@@ -13,7 +13,7 @@ public:
 	void SubirPasajeros();
 	void ViajarProximoDestino();
 
-	enum Posicion { PUERTA, TRANSITO, GIMNACION };
+	enum Posicion { PUERTA, TRANSITO, GIMNACIO };
 
 
 private:
@@ -21,6 +21,7 @@ private:
 	int nroBus;
 	string ip_servidor_ids;
 	MsjSocio socios[CAPACIDAD_BUS];
+	int cantidadPasajeros;
 	ComunicacionBus comunicacion;
 	ShmBus *shmBus;
 	int shmBusId, semBus, mutexShmBus;
@@ -31,5 +32,7 @@ private:
 	bool ObtenerSemaforo();
 	bool PedirId();
 	bool DevolverId();
+	void subirPasajerosPuerta();
+	void subirPasajerosGimnacio();
 
 };
