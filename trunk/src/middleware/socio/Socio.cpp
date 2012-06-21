@@ -27,7 +27,11 @@ bool Socio::IngresarAlPredio( int puerta ){
 
 	comunicacion.enviar_mensaje(&msj, sizeof(msj));
 	comunicacion.recibir_mensaje(&msjRespuesta, sizeof(msjRespuesta), id);
-	if (msjRespuesta.codigoRespuesta){
+	if (msjRespuesta.salidaOentrada == 1) {
+		UPRINTLN( "Socio", printBuffer, "%d Error en la puerta.", id);
+		return false;
+	}
+	if (msjRespuesta.resultado == 0){
 		UPRINTLN( "Socio", printBuffer, "%d No pudo entrar, predio lleno.", id);
 		return false;
 	}
@@ -36,11 +40,35 @@ bool Socio::IngresarAlPredio( int puerta ){
 }
 
 void Socio::TomarBusDeSalaEntradaAGimnasio(){
-	//throw std::runtime_error( "Not implemented" );
+	char printBuffer[200];
+	MsjBusSocio msj;
+	comunicacion.recibir_mensaje(&msj, sizeof(msj), id);
+	if ( msj.idSocio != id) {
+		UPRINTLN( "Socio", printBuffer, "%d Error en el bus.", id);
+	}
+	if (msj.operacion != 1)
+		UPRINTLN( "Socio", printBuffer, "%d Error en el bus.", id);
+
+}
+
+void Socio::BajarDelBus(){
+	char printBuffer[200];
+	MsjBusSocio msj;
+	comunicacion.recibir_mensaje(&msj, sizeof(msj), id);
+	if ( msj.idSocio != id) {
+		UPRINTLN( "Socio", printBuffer, "%d Error en el bus.", id);
+	}
+	if (msj.operacion != 0)
+		UPRINTLN( "Socio", printBuffer, "%d Error en el bus.", id);
+
 }
 
 void Socio::Ejercitar(){
-	//throw std::runtime_error( "Not implemented" );
+	sleep(15);
+	MsjSocio msj;
+	msj.idSocio = id;
+	msj.
+	comunicacion.enviar_mensaje();
 }
 
 void Socio::TomarBusDeGimnasioASalaSalida(){

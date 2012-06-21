@@ -17,6 +17,7 @@ public:
 	bool IngresarAlPredio( int puerta );
 	void TomarBusDeSalaEntradaAGimnasio();
 	void BajarDelBus();
+	void BajarDelBus();
 	void Ejercitar();
 	void TomarBusDeGimnasioASalaSalida();
 	void SalirDelPredio(int puerta);

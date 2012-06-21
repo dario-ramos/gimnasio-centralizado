@@ -17,6 +17,14 @@
 #define SEM_SHM_BUS 200		   //Base para los semaforos que controlan el ingreso a la memoria compartida entre puerta-bus-gimnacio
 #define SEM_BUS 300			   //Base para semaforos de buses, uno por cada bus.
 
+#define ID_PUERTA_1 1000
+#define ID_PUERTA_2 1001
+#define ID_PUERTA_3 1002
+#define ID_BUS_1 2000
+#define ID_BUS_1 2001
+#define ID_BUS_1 2002
+#define ID_GIMNACIO 3000
+
 
 #include <cstdio>
 #include <cstdlib>
@@ -43,6 +51,12 @@ typedef struct {
 	int resultado; //1 = exito, 0 = fallido.
 	int salidaOentrada; //1 = saliendo, 0 = entrando.
 } MsjRespPuerta;
+
+typedef struct {
+	long int tipo;
+	int idSocio;
+	int operacion; //1 = subir, 0 = bajar
+} MsjBusSocio;
 
 typedef struct {
 	int cantidad;
