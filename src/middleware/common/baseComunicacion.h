@@ -12,7 +12,6 @@
 #define COLA_ENTRADA_SOCIOS 4  //Por donde reciben los socios
 #define SALA_ENTRADA 5         //Sala entre puerta de entrada y bus
 #define SALA_SALIDA 6          //Sala entre gimnacio y bus
-#define COLA_ENTRADA_GIMNACIO 7//Para comunica bus con gimnacio
 #define SHM_SALAS 100 		   //Base para memorias compartidas entre puerta-bus-gimancio, habra una para cada puerta
 #define SEM_SHM_BUS 200		   //Base para los semaforos que controlan el ingreso a la memoria compartida entre puerta-bus-gimnacio
 #define SEM_BUS 300			   //Base para semaforos de buses, uno por cada bus.
@@ -44,9 +43,10 @@ typedef struct {
 typedef struct {
 	long int tipo;
 	int idSocio;
+	int origen; // 1 = puerta, 2 = bus, 3 = gim
 	int resultado; //1 = exito, 0 = fallido.
 	int salidaOentrada; //1 = saliendo, 0 = entrando.
-} MsjRespPuerta;
+} MsjRespSocio;
 
 typedef struct {
 	long int tipo;
