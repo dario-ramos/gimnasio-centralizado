@@ -18,8 +18,8 @@ public:
 	bool IngresarSocio();
 	bool EgresarSocio();
 	void BorrarSocio();
-	void NotificarExito();//notifica que la operacion se pudo llevar a cabo (entrada o salida)
-	void NotificarFallo();//notifica que la operacion no se pudo llevar a cabo (entrada o salida)
+	void NotificarExito(Operaciones op);//notifica que la operacion se pudo llevar a cabo (entrada o salida)
+	void NotificarFallo(Operaciones op);//notifica que la operacion no se pudo llevar a cabo (entrada o salida)
 	
 
 private:

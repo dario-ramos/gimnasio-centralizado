@@ -19,64 +19,124 @@ bool Socio::IngresarAlPredio( int puerta ){
 	char printBuffer[200];
 	UPRINTLN( "Socio", printBuffer, "Socio %d decidio entrar por puerta %d", id, puerta );
 	MsjSocio msj;
-	MsjRespPuerta msjRespuesta;
+	MsjRespSocio msjRespuesta;
 	msj.idSocio = id;
 	msj.nroPuerta = puerta;
-	msj.entrando = 1; //entrando = 1
-	msj.tipo = puerta;
+	msj.operacion = Operaciones::ENTRAR_AL_PREDIO;
+	msj.tipo = BASE_ID_PUERTA + puerta;
 
 	comunicacion.enviar_mensaje(&msj, sizeof(msj));
 	comunicacion.recibir_mensaje(&msjRespuesta, sizeof(msjRespuesta), id);
-	if (msjRespuesta.salidaOentrada == 1) {
+	if (msjRespuesta.codOp != Operaciones::ENTRAR_AL_PREDIO) {
 		UPRINTLN( "Socio", printBuffer, "%d Error en la puerta.", id);
 		return false;
 	}
-	if (msjRespuesta.resultado == 0){
+	if (msjRespuesta.codResultado != Resultado::EXITO){
 		UPRINTLN( "Socio", printBuffer, "%d No pudo entrar, predio lleno.", id);
 		return false;
 	}
-	UPRINTLN( "Socio", printBuffer, "%d Entro al predio.", id);
+	UPRINTLN( "Socio", printBuffer, "%d Entro al predio, y espera el bus en la sala.", id);
 	return true;
 }
 
 void Socio::TomarBusDeSalaEntradaAGimnasio(){
 	char printBuffer[200];
-	MsjBusSocio msj;
+	MsjRespSocio msj;
 	comunicacion.recibir_mensaje(&msj, sizeof(msj), id);
 	if ( msj.idSocio != id) {
 		UPRINTLN( "Socio", printBuffer, "%d Error en el bus.", id);
+		return;
 	}
-	if (msj.operacion != 1)
+	if (msj.codOp != Operaciones::SUBIR_AL_BUS) {
 		UPRINTLN( "Socio", printBuffer, "%d Error en el bus.", id);
-
-}
-
-void Socio::BajarDelBus(){
-	char printBuffer[200];
-	MsjBusSocio msj;
-	comunicacion.recibir_mensaje(&msj, sizeof(msj), id);
-	if ( msj.idSocio != id) {
-		UPRINTLN( "Socio", printBuffer, "%d Error en el bus.", id);
+		return;
 	}
-	if (msj.operacion != 0)
-		UPRINTLN( "Socio", printBuffer, "%d Error en el bus.", id);
+	if (msj.codResultado != Resultado::EXITO) {
+		UPRINTLN( "Socio", printBuffer, "%d Error al subir al bus.", id);
+		return;
+	}
+	UPRINTLN( "Socio", printBuffer, "%d Subio al bus", id);
 
 }
 
 void Socio::Ejercitar(){
+	char printBuffer[200];
+	MsjRespSocio rsp;
+	comunicacion.recibir_mensaje(&rsp, sizeof(rsp), id);
+	if (rsp.codOp != Operaciones::BAJAR_DEL_BUS) {
+		UPRINTLN( "Socio", printBuffer, "%d Error en el bus, El socio esperaba bajarse del bus.", id);
+		return;
+	}
+	if (rsp.codResultado != Resultado::EXITO) {
+		UPRINTLN( "Socio", printBuffer, "%d Hubo un error al bajarse del bus.", id);
+		return;
+	}
 	sleep(15);
+}
+
+void Socio::TomarBusDeGimnasioASalida(int puerta){
+	char printBuffer[200];
+	puertaDeSalida = puerta;
 	MsjSocio msj;
 	msj.idSocio = id;
-	msj.
-	comunicacion.enviar_mensaje();
+	msj.operacion = Operaciones::SALIR_DEL_GIMNASIO;
+	msj.nroPuerta = puerta;
+	msj.tipo = ID_GIMNACIO;
+	comunicacion.enviar_mensaje(&msj, sizeof(msj));
+	//Espero al mensaje del bus.
+	MsjRespSocio rsp;
+	comunicacion.recibir_mensaje(&rsp, sizeof(rsp), id);
+	if ( rsp.idSocio != id) {
+		UPRINTLN( "Socio", printBuffer, "%d Error en el bus.", id);
+		return;
+	}
+	if (rsp.codOp != Operaciones::SUBIR_AL_BUS) {
+		UPRINTLN( "Socio", printBuffer, "%d Error en el bus.", id);
+		return;
+	}
+	if (rsp.codResultado != Resultado::EXITO) {
+		UPRINTLN( "Socio", printBuffer, "%d Error al subir al bus.", id);
+		return;
+	}
+	UPRINTLN( "Socio", printBuffer, "%d Subio al bus y se dirige a la puerta de salida.", id);
 }
 
-void Socio::TomarBusDeGimnasioASalaSalida(){
-	//throw std::runtime_error( "Not implemented" );
-}
+void Socio::SalirDelPredio(){
+	char printBuffer[200];
+	MsjRespSocio rsp;
+	comunicacion.recibir_mensaje(&rsp, sizeof(rsp), id);
+	if ( rsp.idSocio != id) {
+		UPRINTLN( "Socio", printBuffer, "%d Error en el bus.", id);
+		return;
+	}
+	if (rsp.codOp != Operaciones::BAJAR_DEL_BUS) {
+		UPRINTLN( "Socio", printBuffer, "%d Error en el bus.", id);
+		return;
+	}
+	UPRINTLN( "Socio", printBuffer, "%d Bajo del bus y va a salir del predio", id);
 
-void Socio::SalirDelPredio(int puerta){
-	//throw std::runtime_error( "Not implemented" );
+	MsjSocio msj;
+	msj.idSocio = id;
+	msj.nroPuerta = puertaDeSalida;
+	msj.operacion = Operaciones::SALIR_DEL_PREDIO;
+	msj.tipo = BASE_ID_PUERTA + puertaDeSalida;
+	comunicacion.enviar_mensaje(&msj, sizeof(msj));
+
+	comunicacion.recibir_mensaje(&rsp, sizeof(rsp), id);
+	if ( rsp.idSocio != id) {
+		UPRINTLN( "Socio", printBuffer, "%d Error en la puerta.", id);
+		return;
+	}
+	if (rsp.codOp != Operaciones::SALIR_DEL_PREDIO) {
+		UPRINTLN( "Socio", printBuffer, "%d Error en el bus.", id);
+		return;
+	}
+	if (rsp.codResultado != Resultado::EXITO){
+		UPRINTLN( "Socio", printBuffer, "%d El socio no puede salir del predio", id);
+		return;
+	}
+	UPRINTLN( "Socio", printBuffer, "%d El socio ha salido del predio.", id);
+
 }
 
 bool Socio::PedirId() {

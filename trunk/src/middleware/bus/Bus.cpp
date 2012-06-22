@@ -109,9 +109,9 @@ void Bus::subirPasajerosPuerta() {
 		comunicacion.recibir_mensaje(socios+i, sizeof(*socios+i), id);
 		shmBus->entrada --;
 		MsjRespSocio rsp;
-		rsp.origen = 2;//Bus
 		rsp.idSocio = (socios+i)->idSocio;
-		rsp.resultado = 1; //se subio al bus.
+		rsp.codOp = Operaciones::SUBIR_AL_BUS; //se subio al bus.
+		rsp.codResultado = Resultado::EXITO;
 		rsp.tipo = (socios+i)->idSocio;
 		comunicacion.enviar_mensaje(&rsp, sizeof(rsp));
 	}
@@ -135,9 +135,9 @@ void Bus::subirPasajerosGimnacio() {
 		comunicacion.recibir_mensaje_gim(socios+i, sizeof(*socios+i), id);
 		shmBus->entrada --;
 		MsjRespSocio rsp;
-		rsp.origen = 2;//Bus
 		rsp.idSocio = (socios+i)->idSocio;
-		rsp.resultado = 1; //se subio al bus.
+		rsp.codOp = Operaciones::SUBIR_AL_BUS; //se subio al bus.
+		rsp.codResultado = Resultado::EXITO;
 		rsp.tipo = (socios+i)->idSocio;
 		comunicacion.enviar_mensaje(&rsp, sizeof(rsp));
 	}
@@ -175,9 +175,9 @@ void Bus::bajarPasajerosPuerta(){
 	int i;
 	for (i = 0; i < cantidadPasajeros; i++){
 		MsjRespSocio rsp;
-		rsp.origen = 2;//Bus
 		rsp.idSocio = (socios+i)->idSocio;
-		rsp.resultado = 0; //se bajo del bus.
+		rsp.codOp = Operaciones::BAJAR_DEL_BUS;
+		rsp.codResultado = Resultado::EXITO;
 		rsp.tipo = (socios+i)->idSocio;
 		comunicacion.enviar_mensaje(&rsp, sizeof(rsp));
 	}
@@ -187,9 +187,9 @@ void Bus::bajarPasajerosGimnacio(){
 	int i;
 	for (i = 0; i < cantidadPasajeros; i++){
 		MsjRespSocio rsp;
-		rsp.origen = 2;//Bus
 		rsp.idSocio = (socios+i)->idSocio;
-		rsp.resultado = 0; //se bajo del bus.
+		rsp.codOp = Operaciones::BAJAR_DEL_BUS;
+		rsp.codResultado = Resultado::EXITO;
 		rsp.tipo = (socios+i)->idSocio;
 		comunicacion.enviar_mensaje(&rsp, sizeof(rsp));
 	}

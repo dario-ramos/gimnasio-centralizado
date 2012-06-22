@@ -16,16 +16,15 @@ public:
 	~Socio();
 	bool IngresarAlPredio( int puerta );
 	void TomarBusDeSalaEntradaAGimnasio();
-	void BajarDelBus();
-	void BajarDelBus();
 	void Ejercitar();
-	void TomarBusDeGimnasioASalaSalida();
-	void SalirDelPredio(int puerta);
+	void TomarBusDeGimnasioASalida(int puerta);
+	void SalirDelPredio();
 
 private: 
 	bool PedirId();
 	bool DevolverId();
 	int id;
+	int puertaDeSalida;
     string ip_servidor_ids;
     ComunicacionSocio comunicacion;
 
