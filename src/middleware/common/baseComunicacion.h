@@ -33,26 +33,28 @@
 #include <signal.h>
 #include <sys/stat.h>
 
+typedef enum Operaciones {ENTRAR_AL_PREDIO = 1, SUBIR_AL_BUS, BAJAR_DEL_BUS, SALIR_DEL_GIMNASIO, SALIR_DEL_PREDIO};
+typedef enum Resultado {EXITO = 1, FALLO};
+
 typedef struct {
 	long int tipo;
 	int idSocio;
 	int nroPuerta;
-	int entrando; //1 entrando, 0 saliendo.
+	int operacion;
 } MsjSocio;
 
 typedef struct {
 	long int tipo;
 	int idSocio;
-	int origen; // 1 = puerta, 2 = bus, 3 = gim
-	int resultado; //1 = exito, 0 = fallido.
-	int salidaOentrada; //1 = saliendo, 0 = entrando.
+	int codOp; //Codigo de operacion: 1 = entrada al predio; 2 = subir al bus; 3 = bajar del bus; 4 = registrarse sala de salida; 5 salir del predio.
+	int codResultado; //Resultado de la operacion. 1 = exito; 0 = operacion fallida.
 } MsjRespSocio;
 
-typedef struct {
+/*typedef struct {
 	long int tipo;
 	int idSocio;
 	int operacion; //1 = subir, 0 = bajar
-} MsjBusSocio;
+} MsjBusSocio;*/
 
 typedef struct {
 	int cantidad;

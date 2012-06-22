@@ -7,8 +7,7 @@ public:
 	int enviar_mensaje_bus(const void * msg, int msg_size);
 
 private:
-	int envio_Bus_qid;
-	int recep_Bus_qid;
+	int envio_bus_qid;
 
 	int inicializarComunicacion();
 	void finalizarComunicacion();
@@ -23,7 +22,7 @@ int ComunicacionPuerta::inicializarComunicacion(){
 	key_t clave;
 	/*Creo la cola de envio al bus*/
 	clave = ftok(DIRECTORIO, SALA_ENTRADA);
-	if((recep_Bus_qid = msgget(clave, 0660)) == -1){
+	if((envio_bus_qid = msgget(clave, 0660)) == -1){
 		perror("inicializarComunicacion: error al crear la cola de respuesta");
 		return 1;
 	}
@@ -47,5 +46,5 @@ key_t ComunicacionPuerta::obtenerClaveRecepcion(){
 }
 
 int ComunicacionPuerta::enviar_mensaje_bus(const void * msg, int msg_size) {
-	return msgsnd(envio_Bus_qid, msg, msg_size - sizeof(long), 0);
+	return msgsnd(envio_bus_qid, msg, msg_size - sizeof(long), 0);
 }

@@ -8,8 +8,8 @@ int main(){
 	}
 	socio.TomarBusDeSalaEntradaAGimnasio();
 	socio.Ejercitar();
-	socio.TomarBusDeGimnasioASalaSalida();
 	puerta = Random::EnteroEnRango( 0, Constantes::CANT_PUERTAS - 1 );
-	socio.SalirDelPredio(puerta);
+	socio.TomarBusDeGimnasioASalida(puerta);
+	socio.SalirDelPredio();
 	return 0;
 }

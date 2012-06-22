@@ -95,6 +95,7 @@ bool Puerta::IngresarSocio() {
 			v(semBus);
 		}
 		v(mutexShmBus);//libero mutex de memoria compartida con el bus
+		NotificarExito(Operaciones::ENTRAR_AL_PREDIO);
 		shmPuertas->cantidad++;
 	}
 	v(mutexPuertas);
@@ -109,17 +110,19 @@ bool Puerta::EgresarSocio() {
 	return true;
 }
 
-void Puerta::NotificarExito() {
-	MsjRespPuerta respuesta;
-	respuesta.resultado = 1; //1 = exito
+void Puerta::NotificarExito(Operaciones op) {
+	MsjRespSocio respuesta;
+	respuesta.codOp = op;
+	respuesta.codResultado = Resultado::EXITO; //1 = exito
 	respuesta.idSocio = socioActual.idSocio;
 	respuesta.tipo = socioActual.idSocio;
 	comunicacion.enviar_mensaje(&respuesta, sizeof(respuesta));
 }
 
-void Puerta::NotificarFallo() {
-	MsjRespPuerta respuesta;
-	respuesta.resultado = 0; //0 = fallo la operacion
+void Puerta::NotificarFallo(Operaciones op) {
+	MsjRespSocio respuesta;
+	respuesta.codOp = op;
+	respuesta.codResultado = Resultado::EXITO; //0 = fallo la operacion
 	respuesta.idSocio = socioActual.idSocio;
 	respuesta.tipo = socioActual.idSocio;
 	comunicacion.enviar_mensaje(&respuesta, sizeof(respuesta));
@@ -189,7 +192,7 @@ bool Puerta::ObtenerSemaforoBus() {
 }
 
 void Puerta::BorrarSocio() {
-	socioActual.entrando = 0;
+	socioActual.operacion = 0;
 	socioActual.idSocio = 0;
 	socioActual.nroPuerta = 0;
 	socioActual.tipo = 0;
