@@ -34,5 +34,7 @@ private:
 	bool DevolverId();
 	void subirPasajerosPuerta();
 	void subirPasajerosGimnacio();
+	void bajarPasajerosPuerta();
+	void bajarPasajerosGimnacio();
 
 };

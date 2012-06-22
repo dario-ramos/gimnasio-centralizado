@@ -108,16 +108,90 @@ void Bus::subirPasajerosPuerta() {
 	for (i = 0; shmBus->entrada > 0 && i < CAPACIDAD_BUS; i++) {
 		comunicacion.recibir_mensaje(socios+i, sizeof(*socios+i), id);
 		shmBus->entrada --;
+		MsjRespSocio rsp;
+		rsp.origen = 2;//Bus
+		rsp.idSocio = (socios+i)->idSocio;
+		rsp.resultado = 1; //se subio al bus.
+		rsp.tipo = (socios+i)->idSocio;
+		comunicacion.enviar_mensaje(&rsp, sizeof(rsp));
 	}
 	cantidadPasajeros = i;
 	v(mutexShmBus);
 }
 
+void Bus::subirPasajerosGimnacio() {
+	if (cantidadPasajeros != 0){
+		char printBuffer[200];
+		UPRINTLN( "Bus", printBuffer, "%d No se puede inicial la subidad de pasajeros a menos que el bus este vacio.", id);
+		return;
+	}
+	p(mutexShmBus);
+	//verifico si tiene que esperar
+	if (shmBus->entrada == 0 && shmBus->salida == 0){
+		p(semBus);
+	}
+	int i;
+	for (i = 0; shmBus->salida > 0 && i < CAPACIDAD_BUS; i++) {
+		comunicacion.recibir_mensaje_gim(socios+i, sizeof(*socios+i), id);
+		shmBus->entrada --;
+		MsjRespSocio rsp;
+		rsp.origen = 2;//Bus
+		rsp.idSocio = (socios+i)->idSocio;
+		rsp.resultado = 1; //se subio al bus.
+		rsp.tipo = (socios+i)->idSocio;
+		comunicacion.enviar_mensaje(&rsp, sizeof(rsp));
+	}
+	cantidadPasajeros = i;
+	v(mutexShmBus);
+}
 
 void Bus::ViajarProximoDestino(){
-	//TODO <NIM>
+	Posicion destino;
+	if(posicion == PUERTA) {
+		destino = GIMNACIO;
+	} else if (posicion == GIMNACIO) {
+		destino = PUERTA;
+	} else {
+		char printBuffer[200];
+		UPRINTLN( "Bus", printBuffer, "%d El bus se encuentra en transito.", id);
+	}
+	posicion = TRANSITO;
+	sleep(15);
+	posicion = destino;
 }
 
 void Bus::BajarPasajeros(){
-	//TODO <NIM>
+	if(posicion == PUERTA){
+		bajarPasajerosPuerta();
+	} else if (posicion == GIMNACIO) {
+		bajarPasajerosGimnacio();
+	} else {
+		char printBuffer[200];
+		UPRINTLN( "Bus", printBuffer, "%d No se puede bajar pasajeros estando en transito.", id);
+	}
+}
+
+void Bus::bajarPasajerosPuerta(){
+	int i;
+	for (i = 0; i < cantidadPasajeros; i++){
+		MsjRespSocio rsp;
+		rsp.origen = 2;//Bus
+		rsp.idSocio = (socios+i)->idSocio;
+		rsp.resultado = 0; //se bajo del bus.
+		rsp.tipo = (socios+i)->idSocio;
+		comunicacion.enviar_mensaje(&rsp, sizeof(rsp));
+	}
+	cantidadPasajeros -= i;
+}
+void Bus::bajarPasajerosGimnacio(){
+	int i;
+	for (i = 0; i < cantidadPasajeros; i++){
+		MsjRespSocio rsp;
+		rsp.origen = 2;//Bus
+		rsp.idSocio = (socios+i)->idSocio;
+		rsp.resultado = 0; //se bajo del bus.
+		rsp.tipo = (socios+i)->idSocio;
+		comunicacion.enviar_mensaje(&rsp, sizeof(rsp));
+	}
+	cantidadPasajeros -= i;
 }
