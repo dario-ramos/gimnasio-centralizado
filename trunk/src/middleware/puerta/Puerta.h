@@ -30,7 +30,7 @@ private:
 	ShmCantidadSocios *shmPuertas;
 	ShmBus *shmBus;
 	int shmPuertasId, shmBusId, semBus, mutexShmBus, mutexPuertas;
-	ComunicacionPuerta comunicacion;
+	ComunicacionPuerta * comunicacion;
 	CLIENT *clnt;
 
 	bool ObtenerMemoriaCompartidaPuertas();
