@@ -9,6 +9,7 @@ class ComunicacionBus : public Comunicacion {
 
 private:
 	int recep_gim_qid;
+	int nroBus;
 
 	int inicializarComunicacion();
 
@@ -20,7 +21,7 @@ int ComunicacionBus::inicializarComunicacion(){
 	Comunicacion::inicializarComunicacion();
 	key_t clave;
 	/*Creo la cola de recepcion de el gimnacio*/
-	clave = ftok(DIRECTORIO, SALA_SALIDA);
+	clave = ftok(DIRECTORIO, BASE_SALA_SALIDA + nroBus);//TODO cambiar inicializacion de la clase para que inicialice nroBus.  Esto no va a funcionar sin eso!
 	if((recep_gim_qid = msgget(clave, 0660)) == -1){
 		perror("inicializarComunicacion: error al crear la cola de respuesta");
 		return 1;
@@ -29,10 +30,10 @@ int ComunicacionBus::inicializarComunicacion(){
 }
 
 key_t ComunicacionBus::obtenerClaveEnvio(){
-	return ftok(DIRECTORIO, COLA_ENTRADA_SOCIOS);
+	return ftok(DIRECTORIO, COLA_SALIDA_SISTEMA);
 }
 
 key_t ComunicacionBus::obtenerClaveRecepcion(){
-	return ftok(DIRECTORIO, SALA_ENTRADA);
+	return ftok(DIRECTORIO, BASE_SALA_ENTRADA + nroBus);
 }
 

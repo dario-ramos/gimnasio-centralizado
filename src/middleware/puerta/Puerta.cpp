@@ -71,58 +71,45 @@ MsjSocio & Puerta::EsperarSocio() {
 }
 
 bool Puerta::IngresarSocio() {
-	p(mutexPuertas);
-	if (shmPuertas->cantidad >= CAPACIDAD_PREDIO) {
-		char printBuffer[200];
-		UPRINTLN( "Puerta", printBuffer, "El predio esta lleno.");
-		v(mutexPuertas);
-		return false;
-	}
-	if (comunicacion.enviar_mensaje_bus(&socioActual, sizeof(socioActual)) == -1) {
-        if(errno == EINVAL || errno == EIDRM){
-        	char printBuffer[200];
-        	UPRINTLN( "Puerta", printBuffer, "La sala se ha destruido");
-		}else{
-			char printBuffer[200];
-			UPRINTLN( "Puerta", printBuffer, "Hubo un error desconocido al registrar el socio en la sala.");
+	if(ingresarSocioMemoriaComparida()){
+		if (comunicacion.enviar_mensaje_bus(&socioActual, sizeof(socioActual)) == -1) {
+			sacarSocioMemoriaComparida();
+			NotificarSocio(Operaciones::ENTRAR_AL_PREDIO, Resultado::FALLO);
+			return false;
+		} else {
+			p(mutexShmBus);//tomo mutex de memoria compartida con el bus
+			shmBus->entrada++;
+			if(shmBus->entrada == 1 && shmBus->salida == 0) { //estaban las 2 en 0, el bus estaba parado
+				v(semBus);
+			}
+			v(mutexShmBus);//libero mutex de memoria compartida con el bus
+			NotificarSocio(Operaciones::ENTRAR_AL_PREDIO, Resultado::EXITO);
 		}
-    	v(mutexPuertas);
-		return false;
+		return true;
 	} else {
-		p(mutexShmBus);//tomo mutex de memoria compartida con el bus
-		shmBus->entrada++;
-		if(shmBus->entrada == 1 && shmBus->salida == 0) { //estaban las 2 en 0, el bus estaba parado
-			v(semBus);
-		}
-		v(mutexShmBus);//libero mutex de memoria compartida con el bus
-		NotificarExito(Operaciones::ENTRAR_AL_PREDIO);
-		shmPuertas->cantidad++;
+		NotificarSocio(Operaciones::ENTRAR_AL_PREDIO, Resultado::FALLO);
+		return false;
 	}
-	v(mutexPuertas);
-	return true;
 
 }
 
 bool Puerta::EgresarSocio() {
-	p(mutexPuertas);
-	shmPuertas->cantidad--;
-	v(mutexPuertas);
-	return true;
+	char printBuffer[200];
+	if (sacarSocioMemoriaComparida()){
+		NotificarSocio(Operaciones::SALIR_DEL_PREDIO, Resultado::EXITO);
+		UPRINTLN( "Puerta", printBuffer, "%d: El socio %d ha salido del predio", id, socioActual.idSocio);
+		return true;
+	} else {
+		NotificarSocio(Operaciones::SALIR_DEL_PREDIO, Resultado::FALLO);
+		UPRINTLN( "Puerta", printBuffer, "%d: HUbo un error al abrir la puerta para el socio %d", id, socioActual.idSocio);
+		return false;
+	}
 }
 
-void Puerta::NotificarExito(Operaciones op) {
+void Puerta::NotificarSocio(Operaciones op, Resultado res) {
 	MsjRespSocio respuesta;
 	respuesta.codOp = op;
-	respuesta.codResultado = Resultado::EXITO; //1 = exito
-	respuesta.idSocio = socioActual.idSocio;
-	respuesta.tipo = socioActual.idSocio;
-	comunicacion.enviar_mensaje(&respuesta, sizeof(respuesta));
-}
-
-void Puerta::NotificarFallo(Operaciones op) {
-	MsjRespSocio respuesta;
-	respuesta.codOp = op;
-	respuesta.codResultado = Resultado::EXITO; //0 = fallo la operacion
+	respuesta.codResultado = res;
 	respuesta.idSocio = socioActual.idSocio;
 	respuesta.tipo = socioActual.idSocio;
 	comunicacion.enviar_mensaje(&respuesta, sizeof(respuesta));
@@ -134,7 +121,8 @@ bool Puerta::ObtenerMemoriaCompartidaPuertas() {
 	/*Creo la memoria compartida entre puertas*/
 	struct stat fileInfo;
 	if( !( stat(DIRECTORIO,&fileInfo) == 0 && S_ISDIR(fileInfo.st_mode) ) ){
-		printf( "El directorio del ftok, %s, no existe\n", DIRECTORIO );
+		char printBuffer[200];
+		UPRINTLN( "Puerta", printBuffer, "%d El directorio del ftok, %s, no existe\n", id, DIRECTORIO);
 		return false;
 	}
 	clave = ftok(DIRECTORIO, SHM_PUERTAS);
@@ -164,7 +152,7 @@ bool Puerta::ObtenerMemoriaCompartidaBus() {
 		printf( "El directorio del ftok, %s, no existe\n", DIRECTORIO );
 		return false;
 	}
-	clave = ftok(DIRECTORIO, SHM_SALAS);
+	clave = ftok(DIRECTORIO, SHM_SALAS+nroPuerta);
 	if((shmBusId = shmget(clave, sizeof(ShmBus),  0660)) == -1){
 		perror("servidor: error obteniendo la memoria compartida");
 		return false;
@@ -175,7 +163,7 @@ bool Puerta::ObtenerMemoriaCompartidaBus() {
 	}
 
 	/*Obtengo el semaforo para la memoria compartida entre puertas*/
-	if((mutexShmBus = getsem(SEM_SHM_BUS)) == -1){
+	if((mutexShmBus = getsem(SEM_SHM_BUS+nroPuerta)) == -1){
 		perror("servidor: error al crear el semaforo");
 		return false;
 	}
@@ -184,7 +172,7 @@ bool Puerta::ObtenerMemoriaCompartidaBus() {
 
 bool Puerta::ObtenerSemaforoBus() {
 	/*Obtengo el semaforo para la memoria compartida entre puertas*/
-	if((semBus = getsem(SEM_BUS)) == -1){
+	if((semBus = getsem(SEM_BUS+nroPuerta)) == -1){
 		perror("servidor: error al crear el semaforo");
 		return false;
 	}
@@ -196,4 +184,32 @@ void Puerta::BorrarSocio() {
 	socioActual.idSocio = 0;
 	socioActual.nroPuerta = 0;
 	socioActual.tipo = 0;
+}
+
+
+bool Puerta::ingresarSocioMemoriaComparida(){
+	p(mutexPuertas);
+	int cantSociosAdentro = shmPuertas->cantidad;
+	if (cantSociosAdentro >= CAPACIDAD_PREDIO) {
+		v(mutexPuertas);
+		char printBuffer[200];
+		UPRINTLN( "Puerta", printBuffer, "El predio esta lleno.");
+		return false;
+	}
+	shmPuertas->cantidad++;
+	v(mutexPuertas);
+	return true;
+}
+
+bool Puerta::sacarSocioMemoriaComparida(){
+	p(mutexPuertas);
+	if (shmPuertas->cantidad <= 0) {
+		v(mutexPuertas);
+		char printBuffer[200];
+		UPRINTLN( "Puerta", printBuffer, "El predio esta vacio. Error fatal en el sistema!");
+		return false;
+	}
+	shmPuertas->cantidad--;
+	v(mutexPuertas);
+	return true;
 }

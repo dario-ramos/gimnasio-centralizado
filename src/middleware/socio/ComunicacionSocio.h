@@ -10,9 +10,9 @@ private:
 };
 
 key_t ComunicacionSocio::obtenerClaveEnvio(){
-	return ftok(DIRECTORIO, COLA_ENTRADA_PUERTAS);
+	return ftok(DIRECTORIO, COLA_ENTRADA_SISTEMA);
 }
 
 key_t ComunicacionSocio::obtenerClaveRecepcion(){
-	return ftok(DIRECTORIO, COLA_ENTRADA_SOCIOS);
+	return ftok(DIRECTORIO, COLA_SALIDA_SISTEMA);
 }

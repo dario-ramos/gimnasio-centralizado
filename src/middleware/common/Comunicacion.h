@@ -27,7 +27,7 @@ private:
 	bool _error;
 
 	Comunicacion(const Comunicacion &) {}
-	Comunicacion operator=(const Comunicacion &) {}
+	Comunicacion operator=(const Comunicacion &) {return NULL;}
 	virtual int inicializarComunicacion();
 	virtual void finalizarComunicacion();
 

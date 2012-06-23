@@ -71,6 +71,7 @@ void Socio::Ejercitar(){
 		UPRINTLN( "Socio", printBuffer, "%d Hubo un error al bajarse del bus.", id);
 		return;
 	}
+	UPRINTLN( "Socio", printBuffer, "%d Se bajo del bus y se dispone a ejercitarse.", id);
 	sleep(15);
 }
 
@@ -81,7 +82,7 @@ void Socio::TomarBusDeGimnasioASalida(int puerta){
 	msj.idSocio = id;
 	msj.operacion = Operaciones::SALIR_DEL_GIMNASIO;
 	msj.nroPuerta = puerta;
-	msj.tipo = ID_GIMNACIO;
+	msj.tipo = ID_GIMNASIO;
 	comunicacion.enviar_mensaje(&msj, sizeof(msj));
 	//Espero al mensaje del bus.
 	MsjRespSocio rsp;
