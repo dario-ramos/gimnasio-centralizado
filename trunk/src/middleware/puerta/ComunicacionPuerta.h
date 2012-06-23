@@ -51,7 +51,7 @@ bool ComunicacionPuerta::inicializarComunicacion(){
 
 
 	/*Creo la cola de envio al bus*/
-	clave = ftok(DIRECTORIO, SALA_ENTRADA);//TODO cambiar para inicializar nroPuerta
+	clave = ftok(DIRECTORIO, SALA_ENTRADA);
 	if((envio_bus_qid = msgget(clave, 0660)) == -1){
 		perror("inicializarComunicacion: error al crear la cola de respuesta");
 		return false;
