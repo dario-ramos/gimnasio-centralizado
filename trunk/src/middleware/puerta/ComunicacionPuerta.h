@@ -37,21 +37,21 @@ bool ComunicacionPuerta::inicializarComunicacion(){
 	}
 
 	clave = ftok(DIRECTORIO, COLA_SALIDA_SISTEMA);
-	if((envio_socio_qid = msgget(clave, IPC_CREAT | IPC_EXCL | 0660)) == -1){
+	if((envio_socio_qid = msgget(clave, 0660)) == -1){
 		perror("inicializarComunicacion: error al crear la cola de peticiones");
 		return false;
 	}
 
 	/*Creo la cola de respuesta*/
 	clave = ftok(DIRECTORIO, COLA_ENTRADA_SISTEMA);
-	if((recep_socio_qid = msgget(clave, IPC_CREAT | IPC_EXCL | 0660)) == -1){
+	if((recep_socio_qid = msgget(clave, 0660)) == -1){
 		perror("inicializarComunicacion: error al crear la cola de respuesta");
 		return false;
 	}
 
 
 	/*Creo la cola de envio al bus*/
-	clave = ftok(DIRECTORIO, BASE_SALA_ENTRADA + nroPuerta);//TODO cambiar para inicializar nroPuerta
+	clave = ftok(DIRECTORIO, SALA_ENTRADA);//TODO cambiar para inicializar nroPuerta
 	if((envio_bus_qid = msgget(clave, 0660)) == -1){
 		perror("inicializarComunicacion: error al crear la cola de respuesta");
 		return false;

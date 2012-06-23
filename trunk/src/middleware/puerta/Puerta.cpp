@@ -81,6 +81,7 @@ MsjSocio & Puerta::EsperarSocio() {
 
 bool Puerta::IngresarSocio() {
 	if(ingresarSocioMemoriaComparida()){
+			socioActual.tipo = BASE_ID_BUS + nroPuerta;
 		if (comunicacion->enviar_mensaje_bus(&socioActual, sizeof(socioActual)) == -1) {
 			sacarSocioMemoriaComparida();
 			NotificarSocio(Operaciones::ENTRAR_AL_PREDIO, Resultado::FALLO);

@@ -20,12 +20,13 @@ private:
 
 	bool ObtenerMemoriasCompartidas();
 	bool ObtenerSemaforos();
+	void NotificarSocio(int idSocio, Operaciones op, Resultado res);
 
 };
 
 void Gimnasio::AtenderSocio() {
 	MsjSocio msj;
-	comunicacion.recibir_mensaje(&msj, sizeof(msj), ID_GIMNASIO);
+	comunicacion.recibir_mensaje_socio(&msj, sizeof(msj), ID_GIMNASIO);
 	int nroPuerta = msj.nroPuerta
 	if(nroPuerta <= 0 || nroPuerta > CANT_BUSES){
 		char printBuffer[200];
@@ -35,14 +36,23 @@ void Gimnasio::AtenderSocio() {
 		return;
 	}
 	msj.tipo = nroPuerta + BASE_ID_BUS;//para que vaya a la sala correspondiente
-	p(mutexShmBus[nroPuerta]);
 	comunicacion.enviar_mensaje_sala(&msj, sizeof(msj), msj.nroPuerta);
+	p(mutexShmBus[nroPuerta]);
 	shmBus[nroPuerta]->salida++;
 	//verifico si el bus estaba parado
 	if(shmBus[nroPuerta]->salida == 1 && shmBus[nroPuerta]->entrada == 0){
 		v(semBus[nroPuerta]);
 	}
 	v(mutexShmBus[nroPuerta]);
+}
+
+void Gimnasio::NotificarSocio(int idSocio, Operaciones op, Resultado res) {
+	MsjRespSocio respuesta;
+	respuesta.codOp = op;
+	respuesta.codResultado = res;
+	respuesta.idSocio = idSocio;
+	respuesta.tipo = idSocio;
+	comunicacion->enviar_mensaje_socio(&respuesta, sizeof(respuesta));
 }
 
 bool Gimnasio::ObtenerMemoriasCompartidas() {
