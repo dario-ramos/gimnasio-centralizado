@@ -10,11 +10,11 @@
 #define SEM_SHM_PUERTAS 2
 #define COLA_ENTRADA_SISTEMA 3 //Por donde reciben las puertas
 #define COLA_SALIDA_SISTEMA 4  //Por donde reciben los socios
-#define BASE_SALA_ENTRADA 100       //Base para las salas de entrada
-#define BASE_SALA_SALIDA 200        //Base para las sala entre gimnacio y bus
-#define SHM_SALAS 300 		   //Base para memorias compartidas entre puerta-bus-gimancio, habra una para cada puerta
-#define SEM_SHM_BUS 400		   //Base para los semaforos que controlan el ingreso a la memoria compartida entre puerta-bus-gimnacio
-#define SEM_BUS 500			   //Base para semaforos de buses, uno por cada bus.
+#define SALA_ENTRADA 5         //Salas de entrada
+#define SALA_SALIDA 6          //Sala entre gimnacio y bus
+#define SHM_SALAS 100 		   //Base para memorias compartidas entre puerta-bus-gimancio, habra una para cada puerta
+#define SEM_SHM_BUS 200		   //Base para los semaforos que controlan el ingreso a la memoria compartida entre puerta-bus-gimnacio
+#define SEM_BUS 300			   //Base para semaforos de buses, uno por cada bus.
 
 #define BASE_ID_PUERTA 1000
 #define BASE_ID_BUS 2000
