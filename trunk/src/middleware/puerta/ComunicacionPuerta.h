@@ -4,10 +4,11 @@
 class ComunicacionPuerta : public Comunicacion {
 public:
 
-	int enviar_mensaje_bus(const void * msg, int msg_size);
+	bool enviar_mensaje_bus(const void * msg, int msg_size);
 
 private:
 	int envio_bus_qid;
+	int nroPuerta;
 
 	int inicializarComunicacion();
 	void finalizarComunicacion();
@@ -21,7 +22,7 @@ int ComunicacionPuerta::inicializarComunicacion(){
 	Comunicacion::inicializarComunicacion();
 	key_t clave;
 	/*Creo la cola de envio al bus*/
-	clave = ftok(DIRECTORIO, SALA_ENTRADA);
+	clave = ftok(DIRECTORIO, BASE_SALA_ENTRADA + nroPuerta);//TODO cambiar para inicializar nroPuerta
 	if((envio_bus_qid = msgget(clave, 0660)) == -1){
 		perror("inicializarComunicacion: error al crear la cola de respuesta");
 		return 1;
@@ -38,13 +39,23 @@ void ComunicacionPuerta::finalizarComunicacion(){
 }
 
 key_t ComunicacionPuerta::obtenerClaveEnvio(){
-	return ftok(DIRECTORIO, COLA_ENTRADA_SOCIOS);
+	return ftok(DIRECTORIO, COLA_SALIDA_SISTEMA);
 }
 
 key_t ComunicacionPuerta::obtenerClaveRecepcion(){
-	return ftok(DIRECTORIO, COLA_ENTRADA_PUERTAS);
+	return ftok(DIRECTORIO, COLA_ENTRADA_SISTEMA);
 }
 
-int ComunicacionPuerta::enviar_mensaje_bus(const void * msg, int msg_size) {
-	return msgsnd(envio_bus_qid, msg, msg_size - sizeof(long), 0);
+bool ComunicacionPuerta::enviar_mensaje_bus(const void * msg, int msg_size) {
+	if(msgsnd(envio_bus_qid, msg, msg_size - sizeof(long), 0) == -1) {
+		if(errno == EINVAL || errno == EIDRM){
+			char printBuffer[200];
+			UPRINTLN( "Puerta", printBuffer, "La sala se ha destruido");
+		}else{
+			char printBuffer[200];
+			UPRINTLN( "Puerta", printBuffer, "Hubo un error desconocido al registrar el socio en la sala.");
+		}
+		return false;
+	}
+	return true;
 }

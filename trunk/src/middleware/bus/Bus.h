@@ -36,5 +36,6 @@ private:
 	void subirPasajerosGimnacio();
 	void bajarPasajerosPuerta();
 	void bajarPasajerosGimnacio();
+	void notificarPasajero(MsjSocio &socio, Operaciones op, Resultado res);
 
 };

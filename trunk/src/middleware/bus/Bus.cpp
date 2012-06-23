@@ -101,22 +101,26 @@ void Bus::subirPasajerosPuerta() {
 	}
 	p(mutexShmBus);
 	//verifico si tiene que esperar
-	if (shmBus->entrada == 0 && shmBus->salida == 0){
+	bool esperar = shmBus->entrada == 0 && shmBus->salida == 0;
+	v(mutexShmBus);
+	if (esperar){
+		//espera
 		p(semBus);
+		esperar = false;
 	}
-	int i;
-	for (i = 0; shmBus->entrada > 0 && i < CAPACIDAD_BUS; i++) {
+	int i = 0;
+	bool subir_pasajero = !esperar;
+	while (subir_pasajero){
 		comunicacion.recibir_mensaje(socios+i, sizeof(*socios+i), id);
+		p(mutexShmBus);
 		shmBus->entrada --;
-		MsjRespSocio rsp;
-		rsp.idSocio = (socios+i)->idSocio;
-		rsp.codOp = Operaciones::SUBIR_AL_BUS; //se subio al bus.
-		rsp.codResultado = Resultado::EXITO;
-		rsp.tipo = (socios+i)->idSocio;
-		comunicacion.enviar_mensaje(&rsp, sizeof(rsp));
+		v(mutexShmBus);
+		notificarPasajero(*(socios+i), Operaciones::SUBIR_AL_BUS, Resultado::EXITO);
+		p(mutexShmBus);
+		subir_pasajero = shmBus->entrada > 0 && i < CAPACIDAD_BUS;
+		v(mutexShmBus);
 	}
 	cantidadPasajeros = i;
-	v(mutexShmBus);
 }
 
 void Bus::subirPasajerosGimnacio() {
@@ -127,22 +131,35 @@ void Bus::subirPasajerosGimnacio() {
 	}
 	p(mutexShmBus);
 	//verifico si tiene que esperar
-	if (shmBus->entrada == 0 && shmBus->salida == 0){
+	bool esperar = shmBus->entrada == 0 && shmBus->salida == 0;
+	v(mutexShmBus);
+	if (esperar){
+		//espera
 		p(semBus);
+		esperar = false;
 	}
-	int i;
-	for (i = 0; shmBus->salida > 0 && i < CAPACIDAD_BUS; i++) {
+	int i = 0;
+	bool subir_pasajero = !esperar;
+	while (subir_pasajero){
 		comunicacion.recibir_mensaje_gim(socios+i, sizeof(*socios+i), id);
-		shmBus->entrada --;
-		MsjRespSocio rsp;
-		rsp.idSocio = (socios+i)->idSocio;
-		rsp.codOp = Operaciones::SUBIR_AL_BUS; //se subio al bus.
-		rsp.codResultado = Resultado::EXITO;
-		rsp.tipo = (socios+i)->idSocio;
-		comunicacion.enviar_mensaje(&rsp, sizeof(rsp));
+		p(mutexShmBus);
+		shmBus->salida --;
+		v(mutexShmBus);
+		notificarPasajero(*(socios+i), Operaciones::SUBIR_AL_BUS, Resultado::EXITO);
+		p(mutexShmBus);
+		subir_pasajero = shmBus->salida > 0 && i < CAPACIDAD_BUS;
+		v(mutexShmBus);
 	}
 	cantidadPasajeros = i;
-	v(mutexShmBus);
+}
+
+void Bus::notificarPasajero(MsjSocio &socio, Operaciones op, Resultado res) {
+	MsjRespSocio rsp;
+	rsp.idSocio = socio.idSocio;
+	rsp.codOp = op; //se subio al bus.
+	rsp.codResultado = res;
+	rsp.tipo = socio.idSocio;
+	comunicacion.enviar_mensaje(&rsp, sizeof(rsp));
 }
 
 void Bus::ViajarProximoDestino(){
@@ -161,37 +178,14 @@ void Bus::ViajarProximoDestino(){
 }
 
 void Bus::BajarPasajeros(){
-	if(posicion == PUERTA){
-		bajarPasajerosPuerta();
-	} else if (posicion == GIMNACIO) {
-		bajarPasajerosGimnacio();
+	if(posicion == PUERTA || posicion == GIMNACIO){
+		int i;
+		for (i = 0; i < cantidadPasajeros; i++){
+			notificarPasajero(*(socios+i), Operaciones::BAJAR_DEL_BUS, Resultado::EXITO);
+		}
+		cantidadPasajeros -= i;
 	} else {
 		char printBuffer[200];
 		UPRINTLN( "Bus", printBuffer, "%d No se puede bajar pasajeros estando en transito.", id);
 	}
-}
-
-void Bus::bajarPasajerosPuerta(){
-	int i;
-	for (i = 0; i < cantidadPasajeros; i++){
-		MsjRespSocio rsp;
-		rsp.idSocio = (socios+i)->idSocio;
-		rsp.codOp = Operaciones::BAJAR_DEL_BUS;
-		rsp.codResultado = Resultado::EXITO;
-		rsp.tipo = (socios+i)->idSocio;
-		comunicacion.enviar_mensaje(&rsp, sizeof(rsp));
-	}
-	cantidadPasajeros -= i;
-}
-void Bus::bajarPasajerosGimnacio(){
-	int i;
-	for (i = 0; i < cantidadPasajeros; i++){
-		MsjRespSocio rsp;
-		rsp.idSocio = (socios+i)->idSocio;
-		rsp.codOp = Operaciones::BAJAR_DEL_BUS;
-		rsp.codResultado = Resultado::EXITO;
-		rsp.tipo = (socios+i)->idSocio;
-		comunicacion.enviar_mensaje(&rsp, sizeof(rsp));
-	}
-	cantidadPasajeros -= i;
 }

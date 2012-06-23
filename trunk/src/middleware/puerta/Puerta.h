@@ -18,8 +18,7 @@ public:
 	bool IngresarSocio();
 	bool EgresarSocio();
 	void BorrarSocio();
-	void NotificarExito(Operaciones op);//notifica que la operacion se pudo llevar a cabo (entrada o salida)
-	void NotificarFallo(Operaciones op);//notifica que la operacion no se pudo llevar a cabo (entrada o salida)
+	void NotificarSocio(Operaciones op, Resultado res);
 	
 
 private:
@@ -41,6 +40,8 @@ private:
 	bool liberarMemoriaCompartidaBus();
 	bool PedirId();
 	bool DevolverId();
+	bool ingresarSocioMemoriaComparida();
+	bool sacarSocioMemoriaComparida();
 
 	
 };
