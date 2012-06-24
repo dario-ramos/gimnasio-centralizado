@@ -27,16 +27,15 @@ private:
 void Gimnasio::AtenderSocio() {
 	MsjSocio msj;
 	comunicacion.recibir_mensaje_socio(&msj, sizeof(msj), ID_GIMNASIO);
-	int nroPuerta = msj.nroPuerta
+	int nroPuerta = msj.nroPuerta;
 	if(nroPuerta <= 0 || nroPuerta > CANT_BUSES){
 		char printBuffer[200];
 		UPRINTLN( "Gimansio", printBuffer, "El socio %d quiso salir por una puerta inexistente.", msj.idSocio);
-		//TODO Enviar mensaje de respuesta cono notificacion de fallo
-		//comunicacion.enviar_mensaje()
+		NotificarSocio(msj.idSocio, Operaciones::SALIR_DEL_GIMNASIO, Resultado::FALLO);
 		return;
 	}
 	msj.tipo = nroPuerta + BASE_ID_BUS;//para que vaya a la sala correspondiente
-	comunicacion.enviar_mensaje_sala(&msj, sizeof(msj), msj.nroPuerta);
+	comunicacion.enviar_mensaje_sala(&msj, sizeof(msj));
 	p(mutexShmBus[nroPuerta]);
 	shmBus[nroPuerta]->salida++;
 	//verifico si el bus estaba parado
