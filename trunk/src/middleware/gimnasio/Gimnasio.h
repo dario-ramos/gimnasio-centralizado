@@ -25,11 +25,12 @@ private:
 };
 
 void Gimnasio::AtenderSocio() {
+	char printBuffer[200];
 	MsjSocio msj;
 	comunicacion.recibir_mensaje_socio(&msj, sizeof(msj), ID_GIMNASIO);
+	UPRINTLN( "Gimansio", printBuffer, "El socio %d se ha registrado en el gimansio para salir por la puerta %d", msj.idSocio, msj.nroPuerta);
 	int nroPuerta = msj.nroPuerta;
 	if(nroPuerta <= 0 || nroPuerta > CANT_BUSES){
-		char printBuffer[200];
 		UPRINTLN( "Gimansio", printBuffer, "El socio %d quiso salir por una puerta inexistente.", msj.idSocio);
 		NotificarSocio(msj.idSocio, Operaciones::SALIR_DEL_GIMNASIO, Resultado::FALLO);
 		return;
@@ -51,7 +52,7 @@ void Gimnasio::NotificarSocio(int idSocio, Operaciones op, Resultado res) {
 	respuesta.codResultado = res;
 	respuesta.idSocio = idSocio;
 	respuesta.tipo = idSocio;
-	comunicacion->enviar_mensaje_socio(&respuesta, sizeof(respuesta));
+	comunicacion.enviar_mensaje_socio(&respuesta, sizeof(respuesta));
 }
 
 bool Gimnasio::ObtenerMemoriasCompartidas() {

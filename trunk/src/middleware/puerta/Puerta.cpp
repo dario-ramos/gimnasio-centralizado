@@ -80,6 +80,7 @@ MsjSocio & Puerta::EsperarSocio() {
 }
 
 bool Puerta::IngresarSocio() {
+	char printBuffer[200];
 	if(ingresarSocioMemoriaComparida()){
 			socioActual.tipo = BASE_ID_BUS + nroPuerta;
 		if (comunicacion->enviar_mensaje_bus(&socioActual, sizeof(socioActual)) == -1) {
@@ -94,10 +95,12 @@ bool Puerta::IngresarSocio() {
 			}
 			v(mutexShmBus);//libero mutex de memoria compartida con el bus
 			NotificarSocio(Operaciones::ENTRAR_AL_PREDIO, Resultado::EXITO);
+			UPRINTLN( "Gimansio", printBuffer, "El socio %d ha ingresado al predio por la puerta ", socioActual.idSocio, nroPuerta);
 		}
 		return true;
 	} else {
 		NotificarSocio(Operaciones::ENTRAR_AL_PREDIO, Resultado::FALLO);
+		UPRINTLN( "Gimansio", printBuffer, "El socio %d intento ingresar por la puerta %d pero el predio esta lleno", socioActual.idSocio, nroPuerta);
 		return false;
 	}
 
