@@ -1,39 +1,99 @@
 #pragma once
 #include "../common/Comunicacion.h"
 
-class ComunicacionBus : public Comunicacion {
-
-	int recibir_mensaje_gim(void *, int msg_size, long msgtype);
+class ComunicacionBus {
+public:
+	ComunicacionBus( int nBus );
 	/*enviar_mensaje la usamos para enviar a los socios, y recibir_mensaje
 	 * para recibir mensajes de las puertas.*/
+	bool recibir_mensaje_gim( void * msg, int msg_size, long msgtype );
+	bool enviar_mensaje_socio( void * msg, int msg_size, long msgtype );
+	bool recibir_mensaje_sala_entrada( void * msg, int msg_size, long msgtype );
 
 private:
+	int envio_socio_qid;
 	int recep_gim_qid;
-	int nroBus;
+	int recep_sala_entrada_qid;
+	int nro_bus;
 
-	int inicializarComunicacion();
-
-	key_t obtenerClaveEnvio();
-	key_t obtenerClaveRecepcion();
+	bool inicializarComunicacion();
 };
 
-int ComunicacionBus::inicializarComunicacion(){
-	Comunicacion::inicializarComunicacion();
+ComunicacionBus::ComunicacionBus( int nBus ) : envio_socio_qid(-1), recep_gim_qid(-1), recep_sala_entrada_qid(-1), nro_bus(nBus){
+}
+
+bool ComunicacionBus::inicializarComunicacion(){
+	char mostrar[200];
 	key_t clave;
-	/*Creo la cola de recepcion de el gimnacio*/
-	clave = ftok(DIRECTORIO, BASE_SALA_SALIDA + nroBus);//TODO cambiar inicializacion de la clase para que inicialice nroBus.  Esto no va a funcionar sin eso!
-	if((recep_gim_qid = msgget(clave, 0660)) == -1){
-		perror("inicializarComunicacion: error al crear la cola de respuesta");
-		return 1;
+
+	//Valido existencia de directorio para ftok
+	struct stat fileInfo;
+	if( !( stat(DIRECTORIO,&fileInfo) == 0 && S_ISDIR(fileInfo.st_mode) ) ){
+		UPRINTLN("inicializarComunicacion",mostrar,"comunicacion: El directorio del ftok, %s, no existe\n", DIRECTORIO );
+		return false;
 	}
-	return 0;
+
+	//envio_socio
+	clave = ftok(DIRECTORIO, COLA_SALIDA_SISTEMA);
+	if((envio_socio_qid = msgget(clave, 0660)) == -1){
+		perror("inicializarComunicacion: error al crear la cola de salida del sistema");
+		return false;
+	}
+
+	//recepc_gim
+	clave = ftok(DIRECTORIO, SALA_SALIDA);
+	if((recep_gim_qid = msgget(clave, 0660)) == -1){
+		perror("inicializarComunicacion: error al crear la cola de recepcion del gimnasio");
+		return false;
+	}
+
+	//sala_entrada
+	clave = ftok(DIRECTORIO, SALA_ENTRADA);
+	if((recep_sala_entrada_qid = msgget(clave, 0660)) == -1){
+		perror("inicializarComunicacion: error al crear la cola de respuesta");
+		return false;
+	}
+	return true;
 }
 
-key_t ComunicacionBus::obtenerClaveEnvio(){
-	return ftok(DIRECTORIO, COLA_SALIDA_SISTEMA);
+bool ComunicacionBus::recibir_mensaje_gim( void * msg, int msg_size, long msgtype ){
+	if(msgrcv(recep_gim_qid, msg, msg_size - sizeof(long), 0) == -1) {
+		if(errno == EINVAL || errno == EIDRM){
+			char printBuffer[200];
+			UPRINTLN( "ComunicacionBus", printBuffer, "El gimnasio ha sido destruido");
+		}else{
+			char printBuffer[200];
+			UPRINTLN( "ComunicacionBus", printBuffer, "Hubo un error desconocido al recibir un mensaje del gimnasio");
+		}
+		return false;
+	}
+	return true;
 }
 
-key_t ComunicacionBus::obtenerClaveRecepcion(){
-	return ftok(DIRECTORIO, BASE_SALA_ENTRADA + nroBus);
+bool ComunicacionBus::enviar_mensaje_socio( void * msg, int msg_size, long msgtype ){
+	if(msgsnd(envio_socio_qid, msg, msg_size - sizeof(long), 0) == -1) {
+		if(errno == EINVAL || errno == EIDRM){
+			char printBuffer[200];
+			UPRINTLN( "ComunicacionBus", printBuffer, "El socio ha sido destruido");
+		}else{
+			char printBuffer[200];
+			UPRINTLN( "ComunicacionBus", printBuffer, "Hubo un error desconocido al enviar un mensaje al socio");
+		}
+		return false;
+	}
+	return true;
 }
 
+bool ComunicacionBus::recibir_mensaje_sala_entrada( void * msg, int msg_size, long msgtype ){
+	if(msgrcv(recep_sala_entrada_qid, msg, msg_size - sizeof(long), 0) == -1) {
+		if(errno == EINVAL || errno == EIDRM){
+			char printBuffer[200];
+			UPRINTLN( "ComunicacionBus", printBuffer, "La sala de entrada ha sido destruida");
+		}else{
+			char printBuffer[200];
+			UPRINTLN( "ComunicacionBus", printBuffer, "Hubo un error desconocido al recibir un mensaje de la sala de entrada");
+		}
+		return false;
+	}
+	return true;
+}
