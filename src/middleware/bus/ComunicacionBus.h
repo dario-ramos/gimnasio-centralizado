@@ -3,7 +3,7 @@
 
 class ComunicacionBus {
 public:
-	ComunicacionBus( int nBus );
+	ComunicacionBus();
 	/*enviar_mensaje la usamos para enviar a los socios, y recibir_mensaje
 	 * para recibir mensajes de las puertas.*/
 	bool recibir_mensaje_gim( void * msg, int msg_size, long msgtype );
@@ -14,12 +14,12 @@ private:
 	int envio_socio_qid;
 	int recep_gim_qid;
 	int recep_sala_entrada_qid;
-	int nro_bus;
 
 	bool inicializarComunicacion();
 };
 
-ComunicacionBus::ComunicacionBus( int nBus ) : envio_socio_qid(-1), recep_gim_qid(-1), recep_sala_entrada_qid(-1), nro_bus(nBus){
+ComunicacionBus::ComunicacionBus() : envio_socio_qid(-1), recep_gim_qid(-1), recep_sala_entrada_qid(-1){
+	inicializarComunicacion();
 }
 
 bool ComunicacionBus::inicializarComunicacion(){
@@ -57,7 +57,7 @@ bool ComunicacionBus::inicializarComunicacion(){
 }
 
 bool ComunicacionBus::recibir_mensaje_gim( void * msg, int msg_size, long msgtype ){
-	if(msgrcv(recep_gim_qid, msg, msg_size - sizeof(long), 0) == -1) {
+	if(msgrcv(recep_gim_qid, msg, msg_size - sizeof(long), msgtype,0) == -1) {
 		if(errno == EINVAL || errno == EIDRM){
 			char printBuffer[200];
 			UPRINTLN( "ComunicacionBus", printBuffer, "El gimnasio ha sido destruido");
@@ -85,7 +85,7 @@ bool ComunicacionBus::enviar_mensaje_socio( void * msg, int msg_size, long msgty
 }
 
 bool ComunicacionBus::recibir_mensaje_sala_entrada( void * msg, int msg_size, long msgtype ){
-	if(msgrcv(recep_sala_entrada_qid, msg, msg_size - sizeof(long), 0) == -1) {
+	if(msgrcv(recep_sala_entrada_qid, msg, msg_size - sizeof(long), msgtype,0) == -1) {
 		if(errno == EINVAL || errno == EIDRM){
 			char printBuffer[200];
 			UPRINTLN( "ComunicacionBus", printBuffer, "La sala de entrada ha sido destruida");

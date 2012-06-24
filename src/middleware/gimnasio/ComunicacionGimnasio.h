@@ -3,7 +3,7 @@
 
 class ComunicacionGimnasio {
 public:
-
+	ComunicacionGimnasio();
 
 	bool recibir_mensaje_socio(void * msg, unsigned int msg_size, long int id);
 	bool enviar_mensaje_socio(const void * msg, unsigned int msg_size);
@@ -16,10 +16,11 @@ private:
 
 	bool inicializarComunicacion();
 
-	key_t obtenerClaveEnvio();
-	key_t obtenerClaveRecepcion();
-
 };
+
+ComunicacionGimnasio::ComunicacionGimnasio(){
+	this->inicializarComunicacion();
+}
 
 bool ComunicacionGimnasio::inicializarComunicacion(){
 	key_t clave;
@@ -50,13 +51,6 @@ bool ComunicacionGimnasio::inicializarComunicacion(){
 	return true;
 }
 
-key_t ComunicacionGimnasio::obtenerClaveEnvio(){
-	return ftok(DIRECTORIO, COLA_SALIDA_SISTEMA);
-}
-
-key_t ComunicacionGimnasio::obtenerClaveRecepcion(){
-	return ftok(DIRECTORIO, COLA_ENTRADA_SISTEMA);
-}
 
 bool ComunicacionGimnasio::recibir_mensaje_socio(void * msg, unsigned int msg_size, long int tipo) {
 	if (msgrcv(recep_socio_qid, msg, msg_size - sizeof(long), tipo, 0) == -1) {

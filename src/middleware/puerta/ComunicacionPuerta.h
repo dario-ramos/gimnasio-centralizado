@@ -3,7 +3,7 @@
 
 class ComunicacionPuerta {
 public:
-	ComunicacionPuerta(int nroPuerta);
+	ComunicacionPuerta();
 	virtual ~ComunicacionPuerta();
 	bool enviar_mensaje_socio(const void * msg, int msg_size);
 	bool recibir_mensaje_socio(void *, int msg_size, long msgtype);
@@ -13,7 +13,6 @@ private:
 	int envio_socio_qid;
 	int recep_socio_qid;
 	int envio_bus_qid;
-	int nroPuerta;
 
 	bool inicializarComunicacion();
 
@@ -22,7 +21,8 @@ private:
 
 };
 
-ComunicacionPuerta::ComunicacionPuerta(int nroPuert) : nroPuerta(nroPuert){
+ComunicacionPuerta::ComunicacionPuerta() {
+	inicializarComunicacion();
 }
 
 bool ComunicacionPuerta::inicializarComunicacion(){
