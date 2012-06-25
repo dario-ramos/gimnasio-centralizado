@@ -4,7 +4,7 @@ int main(){
 	Puerta puerta("localhost"); //TODO <CHK> ¿Pedir id de la puerta a servidor, o recibir como argumento?
 	while(true){
 		const MsjSocio &socio  = puerta.EsperarSocio();
-		if( socio.operacion == Operaciones::ENTRAR_AL_PREDIO )
+		if( socio.operacion == OPS_ENTRAR_AL_PREDIO )
 			puerta.IngresarSocio();
 		else
 			puerta.EgresarSocio();
