@@ -1,7 +1,17 @@
 #include "Bus.h"
+#include "../common/semaforo.h"
+#include "../../common/Uprintf.h"
 
-
-Bus::Bus(const string & ip_srv_ids) : ip_servidor_ids(ip_srv_ids) {
+Bus::Bus(const string & ip_srv_ids) :
+		id(-1), nroBus(-1),
+		ip_servidor_ids(ip_srv_ids),
+		socios(),
+		cantidadPasajeros(0),
+		comunicacion(),
+		shmBus( NULL ),
+		shmBusId(-1), semBus(-1), mutexShmBus(-1),
+		posicion( POS_PUERTA ),
+		clnt( NULL ) {
 	if(!PedirId()){
 		char printBuffer[200];
 		UPRINTLN( "Bus", printBuffer, "No pudo obtener Id.");
@@ -22,7 +32,7 @@ bool Bus::PedirId() {
 	char *obtener_nuevo_id_cliente_1_arg;
 	clnt = clnt_create (ip_servidor_ids.c_str(), SERVIDOR_IDS_PROG, SERVIDOR_IDS_VERS, "udp");
 	if (clnt == NULL) {
-		clnt_pcreateerror (ip_servidor_);
+		clnt_pcreateerror (ip_servidor_ids.c_str());
 		return false;
 	}
 	result_1 = obtener_nuevo_id_puerta_1((void*)&obtener_nuevo_id_cliente_1_arg, clnt);
@@ -83,9 +93,9 @@ bool Bus::ObtenerSemaforo() {
 }
 
 void Bus::SubirPasajeros(){
-	if(posicion == PUERTA){
+	if(posicion == POS_PUERTA){
 		subirPasajerosPuerta();
-	} else if (posicion == GIMNACIO) {
+	} else if (posicion == POS_GIMNASIO) {
 		subirPasajerosGimnacio();
 	} else {
 		char printBuffer[200];
@@ -111,11 +121,11 @@ void Bus::subirPasajerosPuerta() {
 	int i = 0;
 	bool subir_pasajero = !esperar;
 	while (subir_pasajero){
-		comunicacion.recibir_mensaje_sala_entrada(socios+i, sizeof(*socios+i), id);
+		comunicacion.recibir_mensaje_sala_entrada(socios+i, sizeof(socios[i]), id);
 		p(mutexShmBus);
 		shmBus->entrada --;
 		v(mutexShmBus);
-		notificarPasajero(*(socios+i), Operaciones::SUBIR_AL_BUS, Resultado::EXITO);
+		notificarPasajero(*(socios+i), OPS_SUBIR_AL_BUS, RES_EXITO);
 		p(mutexShmBus);
 		subir_pasajero = shmBus->entrada > 0 && i < CAPACIDAD_BUS;
 		v(mutexShmBus);
@@ -141,11 +151,11 @@ void Bus::subirPasajerosGimnacio() {
 	int i = 0;
 	bool subir_pasajero = !esperar;
 	while (subir_pasajero){
-		comunicacion.recibir_mensaje_gim(socios+i, sizeof(*socios+i), id);
+		comunicacion.recibir_mensaje_gim(socios+i, sizeof(socios[i]), id);
 		p(mutexShmBus);
 		shmBus->salida --;
 		v(mutexShmBus);
-		notificarPasajero(*(socios+i), Operaciones::SUBIR_AL_BUS, Resultado::EXITO);
+		notificarPasajero(*(socios+i), OPS_SUBIR_AL_BUS, RES_EXITO);
 		p(mutexShmBus);
 		subir_pasajero = shmBus->salida > 0 && i < CAPACIDAD_BUS;
 		v(mutexShmBus);
@@ -164,24 +174,24 @@ void Bus::notificarPasajero(MsjSocio &socio, Operaciones op, Resultado res) {
 
 void Bus::ViajarProximoDestino(){
 	Posicion destino;
-	if(posicion == PUERTA) {
-		destino = GIMNACIO;
-	} else if (posicion == GIMNACIO) {
-		destino = PUERTA;
+	if(posicion == POS_PUERTA) {
+		destino = POS_GIMNASIO;
+	} else if (posicion == POS_GIMNASIO) {
+		destino = POS_PUERTA;
 	} else {
 		char printBuffer[200];
 		UPRINTLN( "Bus", printBuffer, "%d El bus se encuentra en transito.", id);
 	}
-	posicion = TRANSITO;
+	posicion = POS_TRANSITO;
 	sleep(15);
 	posicion = destino;
 }
 
 void Bus::BajarPasajeros(){
-	if(posicion == PUERTA || posicion == GIMNACIO){
+	if(posicion == POS_PUERTA || posicion == POS_GIMNASIO){
 		int i;
 		for (i = 0; i < cantidadPasajeros; i++){
-			notificarPasajero(*(socios+i), Operaciones::BAJAR_DEL_BUS, Resultado::EXITO);
+			notificarPasajero(*(socios+i), OPS_BAJAR_DEL_BUS, RES_EXITO);
 		}
 		cantidadPasajeros -= i;
 	} else {
@@ -189,3 +199,4 @@ void Bus::BajarPasajeros(){
 		UPRINTLN( "Bus", printBuffer, "%d No se puede bajar pasajeros estando en transito.", id);
 	}
 }
+
