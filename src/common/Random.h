@@ -1,9 +1,9 @@
 #pragma once
 
-#include "stdlib.h"
+#include <cstdlib>
 
 namespace Random{
-	int EnteroEnRango( int min, int max ){
+	inline int EnteroEnRango( int min, int max ){
 		return min + rand() % ( max - min );
 	}
 };
