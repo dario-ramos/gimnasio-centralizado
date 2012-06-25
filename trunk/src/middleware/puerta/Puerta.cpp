@@ -6,12 +6,6 @@ Puerta::Puerta(const string & ip_srv_ids) : ip_servidor_ids(ip_srv_ids) {
 		UPRINTLN( "Puerta", printBuffer, "%No se pudo obtener id y nro de puerta.");
 		return;
 	}
-	comunicacion = new ComunicacionPuerta(nroPuerta);
-	if (!comunicacion->inicializarComunicacion()){
-		char printBuffer[200];
-		UPRINTLN( "Puerta", printBuffer, "%d No se pudo inicializar la comunicacion de la puerta.", id);
-		return;
-	}
 	if(!ObtenerMemoriaCompartidaPuertas()) {
 		char printBuffer[200];
 		UPRINTLN( "Puerta", printBuffer, "%d No se pudo obtener la memoria compartida entre puertas.", id);
@@ -75,7 +69,7 @@ bool Puerta::DevolverId() {
 
 
 MsjSocio & Puerta::EsperarSocio() {
-	comunicacion->recibir_mensaje_socio(&socioActual, sizeof(socioActual), id);
+	comunicacion.recibir_mensaje_socio(&socioActual, sizeof(socioActual), id);
 	return socioActual;
 }
 
@@ -83,7 +77,7 @@ bool Puerta::IngresarSocio() {
 	char printBuffer[200];
 	if(ingresarSocioMemoriaComparida()){
 			socioActual.tipo = BASE_ID_BUS + nroPuerta;
-		if (comunicacion->enviar_mensaje_bus(&socioActual, sizeof(socioActual)) == -1) {
+		if (comunicacion.enviar_mensaje_bus(&socioActual, sizeof(socioActual)) == -1) {
 			sacarSocioMemoriaComparida();
 			NotificarSocio(Operaciones::ENTRAR_AL_PREDIO, Resultado::FALLO);
 			return false;
@@ -125,7 +119,7 @@ void Puerta::NotificarSocio(Operaciones op, Resultado res) {
 	respuesta.codResultado = res;
 	respuesta.idSocio = socioActual.idSocio;
 	respuesta.tipo = socioActual.idSocio;
-	comunicacion->enviar_mensaje_socio(&respuesta, sizeof(respuesta));
+	comunicacion.enviar_mensaje_socio(&respuesta, sizeof(respuesta));
 }
 
 bool Puerta::ObtenerMemoriaCompartidaPuertas() {
@@ -165,7 +159,7 @@ bool Puerta::ObtenerMemoriaCompartidaBus() {
 		printf( "El directorio del ftok, %s, no existe\n", DIRECTORIO );
 		return false;
 	}
-	clave = ftok(DIRECTORIO, SHM_SALAS+nroPuerta);
+	clave = ftok(DIRECTORIO, SHM_BUS + nroPuerta);
 	if((shmBusId = shmget(clave, sizeof(ShmBus),  0660)) == -1){
 		perror("servidor: error obteniendo la memoria compartida");
 		return false;

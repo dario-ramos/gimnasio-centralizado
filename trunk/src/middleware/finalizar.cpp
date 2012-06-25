@@ -36,26 +36,27 @@ int main(void){
     }
 
 	/*Borro la memoria compartida de salas y su semaforo*/
-    clave = ftok(DIRECTORIO, SHM_BUS);
-    if((shm_bus_id = shmget(clave, sizeof(ShmBus), 0660)) == -1){
-		perror("finalizador: error obteniendo la memoria compartida");
-    } else if(shmctl(shm_bus_id, IPC_RMID, (shmid_ds *) 0)){
-        perror("finalizador: error al borrar la cola de compras");
+    for ( int i = 1; i <= CANT_BUSES; i++) {
+		clave = ftok(DIRECTORIO, SHM_BUS + i);
+		if((shm_bus_id = shmget(clave, sizeof(ShmBus), 0660)) == -1){
+			perror("finalizador: error obteniendo la memoria compartida del bus");
+		} else if(shmctl(shm_bus_id, IPC_RMID, (shmid_ds *) 0)){
+			perror("finalizador: error al borrar la cola de compras");
+		}
+
+		if((sem_bus_id = getsem(SEM_SHM_BUS + i)) == -1){
+			perror("finalizador: error al obtener el semaforo");
+		} else if(elisem(sem_bus_id) == -1){
+			perror("finalizador: error al borrar el semaforo de la memoria compartida del bus");
+		}
+
+		/*Borro el semaforo del bus*/
+		if((sem_bus_id = getsem(SEM_BUS + i)) == -1){
+			perror("finalizador: error al obtener el semaforo");
+		} else if((elisem(sem_bus_id)) == -1){
+			perror("finalizador: error al borrar el semaforo del bus");
+		}
     }
-
-    if((sem_bus_id = getsem(SEM_SHM_BUS)) == -1){
-		perror("finalizador: error al obtener el semaforo");
-	} else if(elisem(sem_bus_id) == -1){
-		perror("finalizador: error al borrar el semaforo de la memoria compartida del bus");
-    }
-
-    /*Borro el semaforo del bus*/
-    if((sem_bus_id = getsem(SEM_BUS)) == -1){
-		perror("finalizador: error al obtener el semaforo");
-	} else if((elisem(sem_bus_id)) == -1){
-		perror("finalizador: error al borrar el semaforo del bus");
-	}
-
 
 
     /*Borro las colas*/

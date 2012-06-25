@@ -55,7 +55,7 @@ bool Bus::ObtenerMemoriaCompartida() {
 		printf( "El directorio del ftok, %s, no existe\n", DIRECTORIO );
 		return false;
 	}
-	clave = ftok(DIRECTORIO, SHM_SALAS + nroBus);
+	clave = ftok(DIRECTORIO, SHM_BUS + nroBus);
 	if((shmBusId = shmget(clave, sizeof(ShmBus),  0660)) == -1){
 		perror("servidor: error obteniendo la memoria compartida");
 		return false;
