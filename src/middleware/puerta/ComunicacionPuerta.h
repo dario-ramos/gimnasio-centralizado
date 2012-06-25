@@ -22,7 +22,11 @@ private:
 };
 
 ComunicacionPuerta::ComunicacionPuerta() {
-	inicializarComunicacion();
+	if (!inicializarComunicacion()){
+		char printBuffer[200];
+		UPRINTLN( "ComunicacionPuerta", printBuffer, "%d No se pudo inicializar la comunicacion de la puerta.");
+		return;
+	}
 }
 
 bool ComunicacionPuerta::inicializarComunicacion(){

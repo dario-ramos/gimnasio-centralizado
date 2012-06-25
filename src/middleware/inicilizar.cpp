@@ -47,36 +47,38 @@ int main(void){
     }
 
 	/*Creo la memoria compartida de salas y su semaforo*/
-    clave = ftok(DIRECTORIO, SHM_BUS);
-    if((shm_bus_id = shmget(clave, sizeof(ShmBus), IPC_CREAT | IPC_EXCL | 0660)) == -1){
-		perror("inicializar: error obteniendo la memoria compartida");
-		exit(1);
-    }
-    if((shm_bus = (ShmBus *) shmat(shm_puertas_id, 0, 0)) == (ShmBus * ) -1){
-		perror("inicializar: error al vincular la memoria compartida");
-		exit(1);
-    }
-    shm_bus->entrada = 0;
-    shm_bus->salida = 0;
+    for ( int i = 1; i <= CANT_BUSES; i++) {
+		clave = ftok(DIRECTORIO, SHM_BUS + i);
+		if((shm_bus_id = shmget(clave, sizeof(ShmBus), IPC_CREAT | IPC_EXCL | 0660)) == -1){
+			perror("inicializar: error obteniendo la memoria compartida");
+			exit(1);
+		}
+		if((shm_bus = (ShmBus *) shmat(shm_puertas_id, 0, 0)) == (ShmBus * ) -1){
+			perror("inicializar: error al vincular la memoria compartida");
+			exit(1);
+		}
+		shm_bus->entrada = 0;
+		shm_bus->salida = 0;
 
-    if((sem_shm_bus_id = creasem(SEM_SHM_BUS)) == -1){
-		perror("inicializar: error al crear el semaforo de la memoria compartida del bus");
-		exit(1);
-    }
-    if(inisem(sem_shm_bus_id, 1)){
-		perror("inicializar: error al inicializar el semaforo de la memoria compartida del bus");
-		exit(1);
-    }
+		if((sem_shm_bus_id = creasem(SEM_SHM_BUS + i)) == -1){
+			perror("inicializar: error al crear el semaforo de la memoria compartida del bus");
+			exit(1);
+		}
+		if(inisem(sem_shm_bus_id, 1)){
+			perror("inicializar: error al inicializar el semaforo de la memoria compartida del bus");
+			exit(1);
+		}
 
-    /*Creo el semaforo del bus*/
-    if((sem_bus_id = creasem(SEM_BUS)) == -1){
-		perror("inicializar: error al crear el semaforo de la memoria compartida del bus");
-		exit(1);
-	}
-	if(inisem(sem_bus_id, 0)){//el bus se crea en estado de espera
-		perror("inicializar: error al inicializar el semaforo del bus");
-		exit(1);
-	}
+		/*Creo el semaforo del bus*/
+		if((sem_bus_id = creasem(SEM_BUS + i)) == -1){
+			perror("inicializar: error al crear el semaforo de la memoria compartida del bus");
+			exit(1);
+		}
+		if(inisem(sem_bus_id, 0)){//el bus se crea en estado de espera
+			perror("inicializar: error al inicializar el semaforo del bus");
+			exit(1);
+		}
+    }
 
 
 
