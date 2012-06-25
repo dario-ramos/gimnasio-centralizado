@@ -12,7 +12,7 @@ using namespace std;
 
 class Socio{	//TODO <NIM> Implementar manejo de errores: Devolver codigo de error en todas las funciones, o bien tirar excepciones. Lo mismo para el resto de la API
 public:
-	Socio(string & ip_serv_ids);
+	Socio( const string & ip_serv_ids );
 	~Socio();
 	bool IngresarAlPredio( int puerta );
 	void TomarBusDeSalaEntradaAGimnasio();
@@ -21,12 +21,16 @@ public:
 	void SalirDelPredio();
 
 private: 
-	bool PedirId();
-	bool DevolverId();
+//Estado
 	int id;
 	int puertaDeSalida;
-    string ip_servidor_ids;
-    ComunicacionSocio comunicacion;
-
-    CLIENT *clnt;
+	string ip_servidor_ids;
+	ComunicacionSocio comunicacion;
+	CLIENT *clnt;
+//Comportamiento
+	bool PedirId();
+	bool DevolverId();
+	//Prohibo copia y asignacion
+	Socio( const Socio& );
+	Socio& operator=( const Socio& );
 };

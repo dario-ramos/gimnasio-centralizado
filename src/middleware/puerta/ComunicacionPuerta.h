@@ -1,10 +1,11 @@
 #pragma once
-#include "../common/Comunicacion.h"
+#include "../common/baseComunicacion.h"
+#include <sys/stat.h>
 
 class ComunicacionPuerta {
 public:
 	ComunicacionPuerta();
-	virtual ~ComunicacionPuerta();
+	~ComunicacionPuerta();
 	bool enviar_mensaje_socio(const void * msg, int msg_size);
 	bool recibir_mensaje_socio(void *, int msg_size, long msgtype);
 	bool enviar_mensaje_bus(const void * msg, int msg_size);
@@ -21,10 +22,10 @@ private:
 
 };
 
-ComunicacionPuerta::ComunicacionPuerta() {
+ComunicacionPuerta::ComunicacionPuerta() : envio_socio_qid(-1), recep_socio_qid(-1), envio_bus_qid(-1) {
 	if (!inicializarComunicacion()){
 		char printBuffer[200];
-		UPRINTLN( "ComunicacionPuerta", printBuffer, "%d No se pudo inicializar la comunicacion de la puerta.");
+		UPRINTLN( "ComunicacionPuerta", printBuffer, "No se pudo inicializar la comunicacion de la puerta.");
 		return;
 	}
 }
@@ -33,7 +34,7 @@ bool ComunicacionPuerta::inicializarComunicacion(){
 	char mostrar[200];
 	key_t clave;
 
-	/*Creo la cola de recepcion*/
+	/*Valido existencia directorio ftok*/
 	struct stat fileInfo;
 	if( !( stat(DIRECTORIO,&fileInfo) == 0 && S_ISDIR(fileInfo.st_mode) ) ){
 		UPRINTLN("Comunicacion",mostrar,"comunicacion: El directorio del ftok, %s, no existe\n", DIRECTORIO );

@@ -36,8 +36,8 @@
 
 
 
-typedef enum Operaciones {ENTRAR_AL_PREDIO = 1, SUBIR_AL_BUS, BAJAR_DEL_BUS, SALIR_DEL_GIMNASIO, SALIR_DEL_PREDIO} Operaciones;
-typedef enum Resultado {EXITO = 1, FALLO} Resultado;
+typedef enum Operaciones {OPS_ENTRAR_AL_PREDIO = 1, OPS_SUBIR_AL_BUS, OPS_BAJAR_DEL_BUS, OPS_SALIR_DEL_GIMNASIO, OPS_SALIR_DEL_PREDIO} Operaciones;
+typedef enum Resultado {RES_EXITO = 1, RES_FALLO} Resultado;
 
 typedef struct {
 	long int tipo;
