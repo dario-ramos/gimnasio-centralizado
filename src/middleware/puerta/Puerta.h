@@ -1,11 +1,8 @@
 #pragma once
 #include <string>
-#include "../../common/Constantes.h"
-#include "../../common/Uprintf.h"
-#include "../../common/Random.h"
-#include "../servidor_ids/servidor_ids.h"
 #include "ComunicacionPuerta.h"
 #include "../common/baseComunicacion.h"
+#include "../servidor_ids/servidor_ids.h"
 
 using namespace std;
 

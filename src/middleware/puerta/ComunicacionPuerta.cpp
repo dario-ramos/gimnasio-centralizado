@@ -1,5 +1,6 @@
 #include "ComunicacionPuerta.h"
 #include "../common/baseComunicacion.h"
+#include "../../common/Uprintf.h"
 #include <sys/stat.h>
 
 ComunicacionPuerta::ComunicacionPuerta() : envio_socio_qid(-1), recep_socio_qid(-1), envio_bus_qid(-1) {

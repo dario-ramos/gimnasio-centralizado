@@ -1,4 +1,6 @@
 #include "../middleware/socio/Socio.h"
+#include "../common/Random.h"
+#include "../common/Constantes.h"
 
 int main(){
 	Socio socio( "localhost" );

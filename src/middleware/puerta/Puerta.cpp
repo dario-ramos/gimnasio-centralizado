@@ -1,9 +1,20 @@
 #include "Puerta.h"
+#include "../../common/Constantes.h"
+#include "../../common/Uprintf.h"
+#include "../../common/Random.h"
+#include "../common/semaforo.h"
 
-Puerta::Puerta(const string & ip_srv_ids) : ip_servidor_ids(ip_srv_ids) {
+Puerta::Puerta(const string & ip_srv_ids) :
+		id(-1), nroPuerta(-1),
+		ip_servidor_ids(ip_srv_ids),
+		socioActual(),
+		shmPuertas( NULL ), shmBus( NULL ),
+		shmPuertasId(-1), shmBusId(-1), semBus(-1), mutexShmBus(-1), mutexPuertas(-1),
+		comunicacion(),
+		clnt( NULL ) {
 	if(!PedirId()) {
 		char printBuffer[200];
-		UPRINTLN( "Puerta", printBuffer, "%No se pudo obtener id y nro de puerta.");
+		UPRINTLN( "Puerta", printBuffer, "No se pudo obtener id y nro de puerta.");
 		return;
 	}
 	if(!ObtenerMemoriaCompartidaPuertas()) {
@@ -43,7 +54,7 @@ bool Puerta::PedirId() {
 	char *obtener_nuevo_id_cliente_1_arg;
 	clnt = clnt_create (ip_servidor_ids.c_str(), SERVIDOR_IDS_PROG, SERVIDOR_IDS_VERS, "udp");
 	if (clnt == NULL) {
-		clnt_pcreateerror (ip_servidor_);
+		clnt_pcreateerror (ip_servidor_ids.c_str());
 		return false;
 	}
 	result_1 = obtener_nuevo_id_puerta_1((void*)&obtener_nuevo_id_cliente_1_arg, clnt);
@@ -79,7 +90,7 @@ bool Puerta::IngresarSocio() {
 			socioActual.tipo = BASE_ID_BUS + nroPuerta;
 		if (comunicacion.enviar_mensaje_bus(&socioActual, sizeof(socioActual)) == -1) {
 			sacarSocioMemoriaComparida();
-			NotificarSocio(Operaciones::ENTRAR_AL_PREDIO, Resultado::FALLO);
+			NotificarSocio(OPS_ENTRAR_AL_PREDIO, RES_FALLO);
 			return false;
 		} else {
 			p(mutexShmBus);//tomo mutex de memoria compartida con el bus
@@ -88,12 +99,12 @@ bool Puerta::IngresarSocio() {
 				v(semBus);
 			}
 			v(mutexShmBus);//libero mutex de memoria compartida con el bus
-			NotificarSocio(Operaciones::ENTRAR_AL_PREDIO, Resultado::EXITO);
-			UPRINTLN( "Gimansio", printBuffer, "El socio %d ha ingresado al predio por la puerta ", socioActual.idSocio, nroPuerta);
+			NotificarSocio(OPS_ENTRAR_AL_PREDIO, RES_EXITO);
+			UPRINTLN( "Gimansio", printBuffer, "El socio %d ha ingresado al predio por la puerta %d", socioActual.idSocio, nroPuerta);
 		}
 		return true;
 	} else {
-		NotificarSocio(Operaciones::ENTRAR_AL_PREDIO, Resultado::FALLO);
+		NotificarSocio(OPS_ENTRAR_AL_PREDIO, RES_FALLO);
 		UPRINTLN( "Gimansio", printBuffer, "El socio %d intento ingresar por la puerta %d pero el predio esta lleno", socioActual.idSocio, nroPuerta);
 		return false;
 	}
@@ -103,11 +114,11 @@ bool Puerta::IngresarSocio() {
 bool Puerta::EgresarSocio() {
 	char printBuffer[200];
 	if (sacarSocioMemoriaComparida()){
-		NotificarSocio(Operaciones::SALIR_DEL_PREDIO, Resultado::EXITO);
+		NotificarSocio(OPS_SALIR_DEL_PREDIO, RES_EXITO);
 		UPRINTLN( "Puerta", printBuffer, "%d: El socio %d ha salido del predio", id, socioActual.idSocio);
 		return true;
 	} else {
-		NotificarSocio(Operaciones::SALIR_DEL_PREDIO, Resultado::FALLO);
+		NotificarSocio(OPS_SALIR_DEL_PREDIO, RES_FALLO);
 		UPRINTLN( "Puerta", printBuffer, "%d: HUbo un error al abrir la puerta para el socio %d", id, socioActual.idSocio);
 		return false;
 	}
@@ -220,3 +231,20 @@ bool Puerta::sacarSocioMemoriaComparida(){
 	v(mutexPuertas);
 	return true;
 }
+
+bool Puerta::liberarMemoriaCompartidaPuertas(){
+	if( shmdt(shmPuertas) ){
+		perror("Puerta::liberarMemoriaCompartidaPuertas: Error al hacer detach de shmPuertas");
+		return false;
+	}
+	return true;
+}
+
+bool Puerta::liberarMemoriaCompartidaBus(){
+	if( shmdt(shmBus) ){
+		perror("Puerta::liberarMemoriaCompartidaPuertas: Error al hacer detach de shmBus");
+		return false;
+	}
+	return true;
+}
+
