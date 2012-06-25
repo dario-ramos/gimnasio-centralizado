@@ -20,7 +20,7 @@ obtener_nuevo_id_socio_1_svc(void *argp, struct svc_req *rqstp)
 		strcpy(result.retorno_u.msj_error, servidorIds.msjError);
 		printf("Errorrr %s\n", servidorIds.msjError);
 	}
-	ServidorIds_Desconectar( &servidorIds );
+	ServidorIds_Desconectar( &servidorIds, ARCHIVO_SOCIOS );
 	return &result;
 
 }
@@ -41,7 +41,7 @@ devolver_id_socio_1_svc(int *id, struct svc_req *rqstp)
 		result.cod_ret = 2;
 		strcpy(result.retorno_u.msj_error, servidorIds.msjError);
 	}
-	ServidorIds_Desconectar( &servidorIds );
+	ServidorIds_Desconectar( &servidorIds, ARCHIVO_SOCIOS );
 	return &result;
 }
 
@@ -64,7 +64,7 @@ obtener_nuevo_id_puerta_1_svc(void *argp, struct svc_req *rqstp)
 		strcpy(result.retorno_u.msj_error, servidorIds.msjError);
 		printf("Errorrr %s\n", servidorIds.msjError);
 	}
-	ServidorIds_Desconectar( &servidorIds );
+	ServidorIds_Desconectar( &servidorIds, ARCHIVO_PUERTAS );
 	return &result;
 }
 
@@ -84,7 +84,7 @@ devolver_id_puerta_1_svc(int *id, struct svc_req *rqstp)
 		result.cod_ret = 2;
 		strcpy(result.retorno_u.msj_error, servidorIds.msjError);
 	}
-	ServidorIds_Desconectar( &servidorIds );
+	ServidorIds_Desconectar( &servidorIds, ARCHIVO_PUERTAS );
 	return &result;
 }
 
@@ -107,7 +107,7 @@ obtener_nuevo_id_bus_1_svc(void *argp, struct svc_req *rqstp)
 		strcpy(result.retorno_u.msj_error, servidorIds.msjError);
 		printf("Errorrr %s\n", servidorIds.msjError);
 	}
-	ServidorIds_Desconectar( &servidorIds );
+	ServidorIds_Desconectar( &servidorIds, ARCHIVO_BUSES );
 	return &result;
 }
 
@@ -127,7 +127,7 @@ devolver_id_bus_1_svc(int *id, struct svc_req *rqstp)
 		result.cod_ret = 2;
 		strcpy(result.retorno_u.msj_error, servidorIds.msjError);
 	}
-	ServidorIds_Desconectar( &servidorIds );
+	ServidorIds_Desconectar( &servidorIds, ARCHIVO_PUERTAS );
 	return &result;
 
 }

@@ -21,7 +21,7 @@ void ServidorIds_Conectar( ServidorIds* pThis , char *archivo){
 	pThis->archivoIds = fopen( archivo, "r+b" );
 	pThis->huboError = 0;
 	if( pThis->archivoIds == NULL ){
-		if( !ServidorIds_GenerarArchivo( pThis ) ){
+		if( !ServidorIds_GenerarArchivo( pThis, archivo ) ){
 			perror( "servidor_ids: error al generar el archivo de ids. " );
 			fclose( pThis->archivoIds );
 			sprintf( pThis->msjError, "No se pudo generar el archivo de ids.\n" );
