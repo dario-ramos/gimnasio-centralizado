@@ -3,7 +3,7 @@ FLAGS_PARA_WARNINGS_GPP = -ansi -Wall -Wextra -Weffc++ -Wno-variadic-macros
 DIR_BINARIOS = bin
 DIR_CODIGO = src
 
-socio: servidor_ids puerta bus
+socio: servidor_ids puerta bus gimnasio
 	${COMPILADOR_CPP} ${FLAGS_PARA_WARNINGS_GPP} -o ${DIR_BINARIOS}/socio ${DIR_CODIGO}/aplicacion/socio.cpp \
 									      ${DIR_CODIGO}/middleware/socio/Socio.cpp \
 									      ${DIR_CODIGO}/middleware/socio/ComunicacionSocio.cpp \
@@ -25,6 +25,11 @@ bus:
 									       ${DIR_CODIGO}/middleware/bus/ComunicacionBus.cpp \
 									       ${DIR_CODIGO}/middleware/servidor_ids/servidor_ids_clnt.c \
 									       ${DIR_CODIGO}/middleware/servidor_ids/servidor_ids_xdr.c
+
+gimnasio:
+	${COMPILADOR_CPP} ${FLAGS_PARA_WARNINGS_GPP} -o ${DIR_BINARIOS}/puerta ${DIR_CODIGO}/aplicacion/gimnasio.cpp \
+									       ${DIR_CODIGO}/middleware/gimnasio/Gimnasio.cpp \
+									       ${DIR_CODIGO}/middleware/gimnasio/ComunicacionGimnasio.cpp
 
 clean:
 	cd ${DIR_CODIGO}/middleware/servidor_ids; make clean
