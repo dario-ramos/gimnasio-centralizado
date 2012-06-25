@@ -1,7 +1,7 @@
 #include "../middleware/socio/Socio.h"
 
 int main(){
-	Socio socio("localhost");
+	Socio socio( "localhost" );
 	int puerta = Random::EnteroEnRango( 0, Constantes::CANT_PUERTAS - 1 );
 	if( !socio.IngresarAlPredio(puerta) ){
 		return 1;

@@ -1,5 +1,5 @@
 COMPILADOR_CPP = g++
-FLAGS_PARA_WARNINGS_GPP = -ansi -pedantic -Wall -Wextra -Weffc++
+FLAGS_PARA_WARNINGS_GPP = -ansi -Wall -Wextra -Weffc++ -Wno-variadic-macros
 DIR_BINARIOS = bin
 DIR_CODIGO = src
 

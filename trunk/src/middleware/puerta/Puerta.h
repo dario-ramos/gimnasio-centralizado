@@ -19,9 +19,9 @@ public:
 	bool EgresarSocio();
 	void BorrarSocio();
 	void NotificarSocio(Operaciones op, Resultado res);
-	
 
 private:
+//Estado
 	int id;
 	int nroPuerta;
 	string ip_servidor_ids;
@@ -32,7 +32,7 @@ private:
 	int shmPuertasId, shmBusId, semBus, mutexShmBus, mutexPuertas;
 	ComunicacionPuerta comunicacion;
 	CLIENT *clnt;
-
+//Comportamiento
 	bool ObtenerMemoriaCompartidaPuertas();
 	bool ObtenerMemoriaCompartidaBus();
 	bool ObtenerSemaforoBus();
@@ -42,6 +42,7 @@ private:
 	bool DevolverId();
 	bool ingresarSocioMemoriaComparida();
 	bool sacarSocioMemoriaComparida();
-
-	
+	//Prohibido copia y asignacion
+	Puerta( const Puerta& );
+	Puerta& operator=( const Puerta& );
 };
