@@ -1,5 +1,8 @@
 #include "Socio.h"
 #include "../common/baseComunicacion.h"
+#include "../../common/Constantes.h"
+#include "../../common/Uprintf.h"
+#include "../../common/Random.h"
 
 Socio::Socio( const string &ip_serv_ids ) : id(-1), puertaDeSalida(-1), ip_servidor_ids(ip_serv_ids), comunicacion(), clnt(NULL) {
 	if(!PedirId()){
