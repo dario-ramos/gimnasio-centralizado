@@ -7,7 +7,7 @@ public:
 	/*enviar_mensaje la usamos para enviar a los socios, y recibir_mensaje
 	 * para recibir mensajes de las puertas.*/
 	bool recibir_mensaje_gim( void * msg, int msg_size, long msgtype );
-	bool enviar_mensaje_socio( void * msg, int msg_size, long msgtype );
+	bool enviar_mensaje_socio(const void * msg, int msg_size);
 	bool recibir_mensaje_sala_entrada( void * msg, int msg_size, long msgtype );
 
 private:
@@ -70,11 +70,11 @@ bool ComunicacionBus::recibir_mensaje_gim( void * msg, int msg_size, long msgtyp
 	return true;
 }
 
-bool ComunicacionBus::enviar_mensaje_socio( void * msg, int msg_size, long msgtype ){
+bool ComunicacionBus::enviar_mensaje_socio(const void * msg, int msg_size){
 	if(msgsnd(envio_socio_qid, msg, msg_size - sizeof(long), 0) == -1) {
 		if(errno == EINVAL || errno == EIDRM){
 			char printBuffer[200];
-			UPRINTLN( "ComunicacionBus", printBuffer, "El socio ha sido destruido");
+			UPRINTLN( "ComunicacionBus", printBuffer, "La cola de salida del sistema ha sido destruida");
 		}else{
 			char printBuffer[200];
 			UPRINTLN( "ComunicacionBus", printBuffer, "Hubo un error desconocido al enviar un mensaje al socio");

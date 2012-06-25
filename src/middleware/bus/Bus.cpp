@@ -111,7 +111,7 @@ void Bus::subirPasajerosPuerta() {
 	int i = 0;
 	bool subir_pasajero = !esperar;
 	while (subir_pasajero){
-		comunicacion.recibir_mensaje(socios+i, sizeof(*socios+i), id);
+		comunicacion.recibir_mensaje_sala_entrada(socios+i, sizeof(*socios+i), id);
 		p(mutexShmBus);
 		shmBus->entrada --;
 		v(mutexShmBus);
@@ -159,7 +159,7 @@ void Bus::notificarPasajero(MsjSocio &socio, Operaciones op, Resultado res) {
 	rsp.codOp = op; //se subio al bus.
 	rsp.codResultado = res;
 	rsp.tipo = socio.idSocio;
-	comunicacion.enviar_mensaje(&rsp, sizeof(rsp));
+	comunicacion.enviar_mensaje_socio(&rsp, sizeof(rsp));
 }
 
 void Bus::ViajarProximoDestino(){
