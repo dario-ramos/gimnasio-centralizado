@@ -53,12 +53,6 @@ typedef struct {
 	int codResultado; //Resultado de la operacion. 1 = exito; 0 = operacion fallida.
 } MsjRespSocio;
 
-/*typedef struct {
-	long int tipo;
-	int idSocio;
-	int operacion; //1 = subir, 0 = bajar
-} MsjBusSocio;*/
-
 typedef struct {
 	int cantidad;
 } ShmCantidadSocios;
