@@ -4,13 +4,13 @@
 
 int main(){
 	Socio socio( "localhost" );
-	int puerta = Random::EnteroEnRango( 0, Constantes::CANT_PUERTAS - 1 );
+	int puerta = Random::EnteroEnRango( 1, Constantes::CANT_PUERTAS );
 	if( !socio.IngresarAlPredio(puerta) ){
 		return 1;
 	}
 	socio.TomarBusDeSalaEntradaAGimnasio();
 	socio.Ejercitar();
-	puerta = Random::EnteroEnRango( 0, Constantes::CANT_PUERTAS - 1 );
+	puerta = Random::EnteroEnRango( 1, Constantes::CANT_PUERTAS );
 	socio.TomarBusDeGimnasioASalida(puerta);
 	socio.SalirDelPredio();
 	return 0;

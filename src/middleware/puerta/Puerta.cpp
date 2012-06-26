@@ -105,7 +105,7 @@ bool Puerta::IngresarSocio() {
 		return true;
 	} else {
 		NotificarSocio(OPS_ENTRAR_AL_PREDIO, RES_FALLO);
-		UPRINTLN( "Gimansio", printBuffer, "El socio %d intento ingresar por la puerta %d pero el predio esta lleno", socioActual.idSocio, nroPuerta);
+		UPRINTLN( "Puerta", printBuffer, "El socio %d intento ingresar por la puerta %d pero el predio esta lleno", socioActual.idSocio, nroPuerta);
 		return false;
 	}
 

@@ -104,8 +104,8 @@ void Bus::SubirPasajeros(){
 }
 
 void Bus::subirPasajerosPuerta() {
+	char printBuffer[200];
 	if (cantidadPasajeros != 0){
-		char printBuffer[200];
 		UPRINTLN( "Bus", printBuffer, "%d No se puede inicial la subidad de pasajeros a menos que el bus este vacio.", id);
 		return;
 	}
@@ -115,27 +115,39 @@ void Bus::subirPasajerosPuerta() {
 	v(mutexShmBus);
 	if (esperar){
 		//espera
+		UPRINTLN( "Bus", printBuffer, "%d: No hay pasajeros en la entrada ni salida, el bus permanece parado en la puerta.", id);
 		p(semBus);
 		esperar = false;
+		UPRINTLN( "Bus", printBuffer, "%d: Se ha notificado el ingreso de un pasajero, el bus entra en funcionamiento.", id);
 	}
 	int i = 0;
-	bool subir_pasajero = !esperar;
+	p(mutexShmBus);
+	//verifico si hay pasajeros a la entrada
+	bool subir_pasajero = shmBus->entrada > 0;
+	v(mutexShmBus);
 	while (subir_pasajero){
+		UPRINTLN( "Bus", printBuffer, "%d: Va a subir un pasajero!", id);
 		comunicacion.recibir_mensaje_sala_entrada(socios+i, sizeof(socios[i]), id);
+		UPRINTLN( "Bus", printBuffer, "%d: Se sube el pasajero %d al bus", id, (socios+i)->idSocio);
 		p(mutexShmBus);
 		shmBus->entrada --;
 		v(mutexShmBus);
+		UPRINTLN( "Bus", printBuffer, "%d: Decrementa shmBus->entrada", id);
 		notificarPasajero(*(socios+i), OPS_SUBIR_AL_BUS, RES_EXITO);
+		UPRINTLN( "Bus", printBuffer, "%d: Notifico al pasajero", id);
+		i++;
 		p(mutexShmBus);
 		subir_pasajero = shmBus->entrada > 0 && i < CAPACIDAD_BUS;
 		v(mutexShmBus);
+		UPRINTLN( "Bus", printBuffer, "%d: Hace la validacion", id);
 	}
 	cantidadPasajeros = i;
+	UPRINTLN( "Bus", printBuffer, "%d Se han subido %d pasajeros.", id, cantidadPasajeros);
 }
 
 void Bus::subirPasajerosGimnacio() {
+	char printBuffer[200];
 	if (cantidadPasajeros != 0){
-		char printBuffer[200];
 		UPRINTLN( "Bus", printBuffer, "%d No se puede inicial la subidad de pasajeros a menos que el bus este vacio.", id);
 		return;
 	}
@@ -145,57 +157,70 @@ void Bus::subirPasajerosGimnacio() {
 	v(mutexShmBus);
 	if (esperar){
 		//espera
+		UPRINTLN( "Bus", printBuffer, "%d: No hay pasajeros en la entrada ni salida, el bus permanece parado en el gimansio.", id);
 		p(semBus);
 		esperar = false;
+		UPRINTLN( "Bus", printBuffer, "%d: Se ha notificado el ingreso de un pasajero, el bus entra en funcionamiento.", id);
 	}
 	int i = 0;
-	bool subir_pasajero = !esperar;
+	p(mutexShmBus);
+	//verifico si hay pasajeros a la salida
+	bool subir_pasajero = shmBus->salida > 0;
+	v(mutexShmBus);
 	while (subir_pasajero){
 		comunicacion.recibir_mensaje_gim(socios+i, sizeof(socios[i]), id);
 		p(mutexShmBus);
 		shmBus->salida --;
 		v(mutexShmBus);
 		notificarPasajero(*(socios+i), OPS_SUBIR_AL_BUS, RES_EXITO);
+		i++;
 		p(mutexShmBus);
 		subir_pasajero = shmBus->salida > 0 && i < CAPACIDAD_BUS;
 		v(mutexShmBus);
 	}
 	cantidadPasajeros = i;
+	UPRINTLN( "Bus", printBuffer, "%d Se han subido %d pasajeros.", id, cantidadPasajeros);
 }
 
 void Bus::notificarPasajero(MsjSocio &socio, Operaciones op, Resultado res) {
+	char printBuffer[200];
 	MsjRespSocio rsp;
 	rsp.idSocio = socio.idSocio;
 	rsp.codOp = op; //se subio al bus.
 	rsp.codResultado = res;
 	rsp.tipo = socio.idSocio;
+	UPRINTLN( "Bus", printBuffer, "%d Se va ha enviar mensaje al socio %d.", id, socio.idSocio);
 	comunicacion.enviar_mensaje_socio(&rsp, sizeof(rsp));
+	UPRINTLN( "Bus", printBuffer, "%d Se envia mensaje al socio %d.", id, socio.idSocio);
 }
 
 void Bus::ViajarProximoDestino(){
+	char printBuffer[200];
 	Posicion destino;
 	if(posicion == POS_PUERTA) {
 		destino = POS_GIMNASIO;
 	} else if (posicion == POS_GIMNASIO) {
 		destino = POS_PUERTA;
 	} else {
-		char printBuffer[200];
-		UPRINTLN( "Bus", printBuffer, "%d El bus se encuentra en transito.", id);
+		UPRINTLN( "Bus", printBuffer, "%d El bus se encuentra en transito. No es posible subir pasajeros", id);
 	}
 	posicion = POS_TRANSITO;
-	sleep(15);
+	UPRINTLN( "Bus", printBuffer, "%d El bus se encuentra en transito.", id);
+	sleep(5);
 	posicion = destino;
+	UPRINTLN( "Bus", printBuffer, "%d El bus se llego a su destino", id);
 }
 
 void Bus::BajarPasajeros(){
+	char printBuffer[200];
 	if(posicion == POS_PUERTA || posicion == POS_GIMNASIO){
+		UPRINTLN( "Bus", printBuffer, "%d El bus se dispone a bajar los pasajeros, cantidad de pasajeros a bajar = %d", id, cantidadPasajeros);
 		int i;
 		for (i = 0; i < cantidadPasajeros; i++){
 			notificarPasajero(*(socios+i), OPS_BAJAR_DEL_BUS, RES_EXITO);
 		}
 		cantidadPasajeros -= i;
 	} else {
-		char printBuffer[200];
 		UPRINTLN( "Bus", printBuffer, "%d No se puede bajar pasajeros estando en transito.", id);
 	}
 }
