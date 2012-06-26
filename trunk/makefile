@@ -20,16 +20,16 @@ puerta:
 									       ${DIR_CODIGO}/middleware/servidor_ids/servidor_ids_xdr.c
 
 bus:
-	${COMPILADOR_CPP} ${FLAGS_PARA_WARNINGS_GPP} -o ${DIR_BINARIOS}/puerta ${DIR_CODIGO}/aplicacion/bus.cpp \
-									       ${DIR_CODIGO}/middleware/bus/Bus.cpp \
-									       ${DIR_CODIGO}/middleware/bus/ComunicacionBus.cpp \
-									       ${DIR_CODIGO}/middleware/servidor_ids/servidor_ids_clnt.c \
-									       ${DIR_CODIGO}/middleware/servidor_ids/servidor_ids_xdr.c
+	${COMPILADOR_CPP} ${FLAGS_PARA_WARNINGS_GPP} -o ${DIR_BINARIOS}/bus ${DIR_CODIGO}/aplicacion/bus.cpp \
+									    ${DIR_CODIGO}/middleware/bus/Bus.cpp \
+									    ${DIR_CODIGO}/middleware/bus/ComunicacionBus.cpp \
+									    ${DIR_CODIGO}/middleware/servidor_ids/servidor_ids_clnt.c \
+									    ${DIR_CODIGO}/middleware/servidor_ids/servidor_ids_xdr.c
 
 gimnasio:
-	${COMPILADOR_CPP} ${FLAGS_PARA_WARNINGS_GPP} -o ${DIR_BINARIOS}/puerta ${DIR_CODIGO}/aplicacion/gimnasio.cpp \
-									       ${DIR_CODIGO}/middleware/gimnasio/Gimnasio.cpp \
-									       ${DIR_CODIGO}/middleware/gimnasio/ComunicacionGimnasio.cpp
+	${COMPILADOR_CPP} ${FLAGS_PARA_WARNINGS_GPP} -o ${DIR_BINARIOS}/gimnasio ${DIR_CODIGO}/aplicacion/gimnasio.cpp \
+									         ${DIR_CODIGO}/middleware/gimnasio/Gimnasio.cpp \
+									         ${DIR_CODIGO}/middleware/gimnasio/ComunicacionGimnasio.cpp
 
 clean:
 	cd ${DIR_CODIGO}/middleware/servidor_ids; make clean
