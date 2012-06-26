@@ -3,6 +3,7 @@
 #include "../../common/Uprintf.h"
 
 ComunicacionSocio::ComunicacionSocio() : envio_sistema_qid(-1), recep_sistema_qid(-1){
+	inicializarComunicacion();
 }
 
 bool ComunicacionSocio::inicializarComunicacion(){
