@@ -3,9 +3,9 @@
 
 #include <stdio.h>
 
-#define ARCHIVO_SOCIOS "/home/tomas/Documents/Distribuidos/trunk/servidor_ids_clientes/ids_socios.ids"
-#define ARCHIVO_PUERTAS "/home/tomas/Documents/Distribuidos/trunk/servidor_ids_clientes/ids_puertas.ids"
-#define ARCHIVO_BUSES "/home/tomas/Documents/Distribuidos/trunk/servidor_ids_clientes/ids_buses.ids"
+#define ARCHIVO_SOCIOS "/home/tomas/Documents/Distribuidos/gimnasio/trunk/bin/ids_socios.ids"
+#define ARCHIVO_PUERTAS "/home/tomas/Documents/Distribuidos/gimnasio/trunk/bin/ids_puertas.ids"
+#define ARCHIVO_BUSES "/home/tomas/Documents/Distribuidos/gimnasio/trunk/bin/ids_buses.ids"
 #define MAX_CANT_CLIENTES 10
 #define SERVIDOR_IDS_MAX_LONG_MSJ_ERROR 200
 

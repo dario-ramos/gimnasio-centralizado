@@ -3,14 +3,15 @@ FLAGS_PARA_WARNINGS_GPP = -ansi -Wall -Wextra -Weffc++ -Wno-variadic-macros
 DIR_BINARIOS = bin
 DIR_CODIGO = src
 
-socio: servidor_ids puerta bus gimnasio
+socio: servidor_ids puerta bus gimnasio inicializar finalizar
 	${COMPILADOR_CPP} ${FLAGS_PARA_WARNINGS_GPP} -o ${DIR_BINARIOS}/socio ${DIR_CODIGO}/aplicacion/socio.cpp \
 									      ${DIR_CODIGO}/middleware/socio/Socio.cpp \
 									      ${DIR_CODIGO}/middleware/socio/ComunicacionSocio.cpp \
 									      ${DIR_CODIGO}/middleware/servidor_ids/servidor_ids_clnt.c \
 									      ${DIR_CODIGO}/middleware/servidor_ids/servidor_ids_xdr.c
 servidor_ids:
-	cd ${DIR_CODIGO}/middleware/servidor_ids; make; cp servidor_ids_server.c.bak servidor_ids_server.c; cp servidor_ids_client.c.bak servidor_ids_client.c;
+	cd ${DIR_CODIGO}/middleware/servidor_ids; make; cp servidor_ids_server.c.bak servidor_ids_server.c; cp servidor_ids_client.c.bak servidor_ids_client.c; make
+	cp ${DIR_CODIGO}/middleware/servidor_ids/servidor_ids_server ${DIR_BINARIOS}/
 
 puerta:
 	${COMPILADOR_CPP} ${FLAGS_PARA_WARNINGS_GPP} -o ${DIR_BINARIOS}/puerta ${DIR_CODIGO}/aplicacion/puerta.cpp \
@@ -32,7 +33,7 @@ gimnasio:
 									         ${DIR_CODIGO}/middleware/gimnasio/ComunicacionGimnasio.cpp
 
 inicializar:
-	${COMPILADOR_CPP} ${FLAGS_PARA_WARNINGS_GPP} -o ${DIR_BINARIOS}/inicializar ${DIR_CODIGO}/middleware/inicializar.cpp
+	${COMPILADOR_CPP} ${FLAGS_PARA_WARNINGS_GPP} -o ${DIR_BINARIOS}/inicializar ${DIR_CODIGO}/middleware/inicilizar.cpp
 
 finalizar:
 	${COMPILADOR_CPP} ${FLAGS_PARA_WARNINGS_GPP} -o ${DIR_BINARIOS}/finalizar ${DIR_CODIGO}/middleware/finalizar.cpp
