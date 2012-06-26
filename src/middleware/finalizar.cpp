@@ -44,7 +44,7 @@ int main(void){
 			perror("finalizador: error al borrar la cola de compras");
 		}
 
-		if((shm_bus_id = getsem(SEM_SHM_BUS + i)) == -1){
+		if((sem_shm_bus_id = getsem(SEM_SHM_BUS + i)) == -1){
 			perror("finalizador: error al obtener el semaforo");
 		} else if(elisem(shm_bus_id) == -1){
 			perror("finalizador: error al borrar el semaforo de la memoria compartida del bus");
