@@ -4,7 +4,7 @@
  * as a guideline for developing your own functions.
  */
 
-#include "servidor_ids_clientes.h"
+#include "servidor_ids.h"
 
 
 void
@@ -12,9 +12,17 @@ servidor_ids_prog_1(char *host)
 {
 	CLIENT *clnt;
 	retorno  *result_1;
-	char *obtener_nuevo_id_cliente_1_arg;
+	char *obtener_nuevo_id_socio_1_arg;
 	retorno  *result_2;
-	int  devolver_id_cliente_1_arg;
+	int  devolver_id_socio_1_arg;
+	retorno  *result_3;
+	char *obtener_nuevo_id_puerta_1_arg;
+	retorno  *result_4;
+	int  devolver_id_puerta_1_arg;
+	retorno  *result_5;
+	char *obtener_nuevo_id_bus_1_arg;
+	retorno  *result_6;
+	int  devolver_id_bus_1_arg;
 
 #ifndef	DEBUG
 	clnt = clnt_create (host, SERVIDOR_IDS_PROG, SERVIDOR_IDS_VERS, "udp");
@@ -24,25 +32,30 @@ servidor_ids_prog_1(char *host)
 	}
 #endif	/* DEBUG */
 
-	result_1 = obtener_nuevo_id_cliente_1((void*)&obtener_nuevo_id_cliente_1_arg, clnt);
+	result_1 = obtener_nuevo_id_socio_1((void*)&obtener_nuevo_id_socio_1_arg, clnt);
 	if (result_1 == (retorno *) NULL) {
 		clnt_perror (clnt, "call failed");
 	}
-	if(result_1->cod_ret == 1)
-		printf( "Se pide el Id. cod_ret: %d, id_cliente: %i\n", result_1->cod_ret, result_1->retorno_u.id_cliente );
-	else
-		printf( "Se pide el Id. cod_ret: %d, error: %s\n", result_1->cod_ret, result_1->retorno_u.msj_error );
-	devolver_id_cliente_1_arg = result_1->retorno_u.id_cliente;
-	result_2 = devolver_id_cliente_1(&devolver_id_cliente_1_arg, clnt);
+	result_2 = devolver_id_socio_1(&devolver_id_socio_1_arg, clnt);
 	if (result_2 == (retorno *) NULL) {
 		clnt_perror (clnt, "call failed");
 	}
-	if(result_2->cod_ret == 1)
-		printf( "Se devuelve el Id. cod_ret: %d, id_cliente: %i\n", result_2->cod_ret, result_2->retorno_u.id_cliente );
-	else
-		printf( "Se pide el Id. cod_ret: %d, error: %s\n", result_2->cod_ret, result_2->retorno_u.msj_error );
-
-
+	result_3 = obtener_nuevo_id_puerta_1((void*)&obtener_nuevo_id_puerta_1_arg, clnt);
+	if (result_3 == (retorno *) NULL) {
+		clnt_perror (clnt, "call failed");
+	}
+	result_4 = devolver_id_puerta_1(&devolver_id_puerta_1_arg, clnt);
+	if (result_4 == (retorno *) NULL) {
+		clnt_perror (clnt, "call failed");
+	}
+	result_5 = obtener_nuevo_id_bus_1((void*)&obtener_nuevo_id_bus_1_arg, clnt);
+	if (result_5 == (retorno *) NULL) {
+		clnt_perror (clnt, "call failed");
+	}
+	result_6 = devolver_id_bus_1(&devolver_id_bus_1_arg, clnt);
+	if (result_6 == (retorno *) NULL) {
+		clnt_perror (clnt, "call failed");
+	}
 #ifndef	DEBUG
 	clnt_destroy (clnt);
 #endif	 /* DEBUG */
