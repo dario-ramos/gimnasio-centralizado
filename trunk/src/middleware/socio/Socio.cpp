@@ -65,6 +65,7 @@ void Socio::TomarBusDeSalaEntradaAGimnasio(){
 void Socio::Ejercitar(){
 	char printBuffer[200];
 	MsjRespSocio rsp;
+	UPRINTLN( "Socio", printBuffer, "%d Se va ha bajar de bus", id);
 	comunicacion.recibir_mensaje_bus(&rsp, sizeof(rsp), id);
 	if (rsp.codOp != OPS_BAJAR_DEL_BUS) {
 		UPRINTLN( "Socio", printBuffer, "%d Error en el bus, El socio esperaba bajarse del bus.", id);
@@ -86,9 +87,11 @@ void Socio::TomarBusDeGimnasioASalida(int puerta){
 	msj.operacion = OPS_SALIR_DEL_GIMNASIO;
 	msj.nroPuerta = puerta;
 	msj.tipo = ID_GIMNASIO;
+	UPRINTLN( "Socio", printBuffer, "%d Va a registrarse a la salida del gimansio para salir por la puerta %d", id, puerta);
 	comunicacion.enviar_mensaje_gimnasio(&msj, sizeof(msj));
 	//Espero al mensaje del bus.
 	MsjRespSocio rsp;
+	UPRINTLN( "Socio", printBuffer, "%d Espera a ser notificado por el bus %d para subir al mismo ", id, puerta);
 	comunicacion.recibir_mensaje_bus(&rsp, sizeof(rsp), id);
 	if ( rsp.idSocio != id) {
 		UPRINTLN( "Socio", printBuffer, "%d Error en el bus.", id);

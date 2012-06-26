@@ -46,7 +46,7 @@ int main(void){
 
 		if((sem_shm_bus_id = getsem(SEM_SHM_BUS + i)) == -1){
 			perror("finalizador: error al obtener el semaforo");
-		} else if(elisem(shm_bus_id) == -1){
+		} else if(elisem(sem_shm_bus_id) == -1){
 			perror("finalizador: error al borrar el semaforo de la memoria compartida del bus");
 		}
 
