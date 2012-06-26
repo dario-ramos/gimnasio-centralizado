@@ -35,7 +35,7 @@ bool Bus::PedirId() {
 		clnt_pcreateerror (ip_servidor_ids.c_str());
 		return false;
 	}
-	result_1 = obtener_nuevo_id_puerta_1((void*)&obtener_nuevo_id_cliente_1_arg, clnt);
+	result_1 = obtener_nuevo_id_bus_1((void*)&obtener_nuevo_id_cliente_1_arg, clnt);
 	if (result_1 == (retorno *) NULL) {
 		clnt_perror (clnt, "Error al obtener el Id");
 		return false;
@@ -47,7 +47,7 @@ bool Bus::PedirId() {
 
 bool Bus::DevolverId() {
     retorno  *result_1;
-    result_1 = devolver_id_puerta_1(&nroBus, clnt);
+    result_1 = devolver_id_bus_1(&nroBus, clnt);
     if (result_1 == (retorno *) NULL) {
             clnt_perror (clnt, "Error al devolver el Id");
             return false;
