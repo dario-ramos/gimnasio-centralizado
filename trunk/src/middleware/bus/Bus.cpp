@@ -1,6 +1,7 @@
 #include "Bus.h"
 #include "../common/semaforo.h"
 #include "../../common/Uprintf.h"
+#include "../../common/Random.h"
 
 Bus::Bus(const string & ip_srv_ids) :
 		id(-1), nroBus(-1),
@@ -116,6 +117,9 @@ void Bus::subirPasajerosPuerta() {
 	if (esperar){
 		//espera
 		UPRINTLN( "Bus", printBuffer, "%d: No hay pasajeros en la entrada ni salida, el bus permanece parado en la puerta.", id);
+		p(mutexShmBus);
+		shmBus->estado = BUS_ESPERANDO;
+		v(mutexShmBus);
 		p(semBus);
 		esperar = false;
 		UPRINTLN( "Bus", printBuffer, "%d: Se ha notificado el ingreso de un pasajero, el bus entra en funcionamiento.", id);
@@ -123,6 +127,8 @@ void Bus::subirPasajerosPuerta() {
 	int i = 0;
 	p(mutexShmBus);
 	//verifico si hay pasajeros a la entrada
+	int cant_entrada = shmBus->entrada;
+	int cant_salida = shmBus->salida;
 	bool subir_pasajero = shmBus->entrada > 0;
 	v(mutexShmBus);
 	while (subir_pasajero){
@@ -140,9 +146,12 @@ void Bus::subirPasajerosPuerta() {
 		subir_pasajero = shmBus->entrada > 0 && i < CAPACIDAD_BUS;
 		v(mutexShmBus);
 		UPRINTLN( "Bus", printBuffer, "%d: Hace la validacion", id);
+		sleep(Random::EnteroEnRango(1,5));
 	}
 	cantidadPasajeros = i;
-	UPRINTLN( "Bus", printBuffer, "%d Se han subido %d pasajeros.", id, cantidadPasajeros);
+
+	UPRINTLN( "Bus", printBuffer, "%d Se han subido %d pasajeros. Hay %d pasajeros en la entrada y %d en la salida", id, cantidadPasajeros, cant_entrada, cant_salida);
+
 }
 
 void Bus::subirPasajerosGimnacio() {
@@ -158,6 +167,9 @@ void Bus::subirPasajerosGimnacio() {
 	if (esperar){
 		//espera
 		UPRINTLN( "Bus", printBuffer, "%d: No hay pasajeros en la entrada ni salida, el bus permanece parado en el gimansio.", id);
+		p(mutexShmBus);
+		shmBus->estado = BUS_ESPERANDO;
+		v(mutexShmBus);
 		p(semBus);
 		esperar = false;
 		UPRINTLN( "Bus", printBuffer, "%d: Se ha notificado el ingreso de un pasajero, el bus entra en funcionamiento.", id);
@@ -177,6 +189,7 @@ void Bus::subirPasajerosGimnacio() {
 		p(mutexShmBus);
 		subir_pasajero = shmBus->salida > 0 && i < CAPACIDAD_BUS;
 		v(mutexShmBus);
+		sleep(Random::EnteroEnRango(1,5));
 	}
 	cantidadPasajeros = i;
 	UPRINTLN( "Bus", printBuffer, "%d Se han subido %d pasajeros.", id, cantidadPasajeros);
@@ -199,17 +212,30 @@ void Bus::ViajarProximoDestino(){
 	Posicion destino;
 	if(posicion == POS_PUERTA) {
 		destino = POS_GIMNASIO;
+		UPRINTLN( "Bus", printBuffer, "%d El bus va a viajar al gimnasio", id);//TODO emprolijar
 	} else if (posicion == POS_GIMNASIO) {
 		destino = POS_PUERTA;
+		UPRINTLN( "Bus", printBuffer, "%d El bus va a viajar a la puerta", id);
 	} else {
 		UPRINTLN( "Bus", printBuffer, "%d El bus se encuentra en transito. No es posible subir pasajeros", id);
 	}
+
 	posicion = POS_TRANSITO;
+
+	p(mutexShmBus);
+	shmBus->estado = posicion;
+	v(mutexShmBus);
 	UPRINTLN( "Bus", printBuffer, "%d El bus se encuentra en transito.", id);
-	sleep(5);
+	sleep(Random::EnteroEnRango(10,20));
 	posicion = destino;
+
+	p(mutexShmBus);
+	shmBus->estado = posicion;
+	v(mutexShmBus);
 	UPRINTLN( "Bus", printBuffer, "%d El bus se llego a su destino", id);
 }
+
+
 
 void Bus::BajarPasajeros(){
 	char printBuffer[200];
@@ -218,6 +244,7 @@ void Bus::BajarPasajeros(){
 		int i;
 		for (i = 0; i < cantidadPasajeros; i++){
 			notificarPasajero(*(socios+i), OPS_BAJAR_DEL_BUS, RES_EXITO);
+			sleep(Random::EnteroEnRango(1,5));
 		}
 		cantidadPasajeros -= i;
 	} else {

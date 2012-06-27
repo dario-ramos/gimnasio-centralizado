@@ -38,6 +38,7 @@
 
 typedef enum Operaciones {OPS_ENTRAR_AL_PREDIO = 1, OPS_SUBIR_AL_BUS, OPS_BAJAR_DEL_BUS, OPS_SALIR_DEL_GIMNASIO, OPS_SALIR_DEL_PREDIO} Operaciones;
 typedef enum Resultado {RES_EXITO = 1, RES_FALLO} Resultado;
+enum Posicion { POS_PUERTA, POS_TRANSITO, POS_GIMNASIO, BUS_ESPERANDO };
 
 typedef struct {
 	long int tipo;
@@ -60,6 +61,7 @@ typedef struct {
 typedef struct {
 	int entrada;
 	int salida;
+	int estado;
 } ShmBus;
 
 

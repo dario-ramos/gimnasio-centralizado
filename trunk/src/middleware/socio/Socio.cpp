@@ -76,7 +76,7 @@ void Socio::Ejercitar(){
 		return;
 	}
 	UPRINTLN( "Socio", printBuffer, "%d Se bajo del bus y se dispone a ejercitarse.", id);
-	sleep(15);
+	sleep(Random::EnteroEnRango(1,20));
 }
 
 void Socio::TomarBusDeGimnasioASalida(int puerta){

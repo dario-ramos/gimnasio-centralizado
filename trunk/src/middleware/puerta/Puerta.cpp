@@ -95,7 +95,7 @@ bool Puerta::IngresarSocio() {
 		} else {
 			p(mutexShmBus);//tomo mutex de memoria compartida con el bus
 			shmBus->entrada++;
-			if(shmBus->entrada == 1 && shmBus->salida == 0) { //estaban las 2 en 0, el bus estaba parado
+			if(shmBus->entrada == 1 && shmBus->salida == 0 && shmBus->estado == BUS_ESPERANDO) { //estaban las 2 en 0, el bus estaba parado
 				v(semBus);
 			}
 			v(mutexShmBus);//libero mutex de memoria compartida con el bus
