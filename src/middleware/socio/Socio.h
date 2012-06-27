@@ -15,6 +15,7 @@ public:
 	void Ejercitar();
 	void TomarBusDeGimnasioASalida(int puerta);
 	void SalirDelPredio();
+	int getId() {return id;}
 
 private: 
 //Estado

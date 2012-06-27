@@ -12,8 +12,6 @@ public:
 	void SubirPasajeros();
 	void ViajarProximoDestino();
 
-	enum Posicion { POS_PUERTA, POS_TRANSITO, POS_GIMNASIO };
-
 private:
 //Estado
 	int id;
